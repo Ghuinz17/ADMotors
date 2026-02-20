@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "AD Motor´s ",
+    "slug": "ADMotorsApp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/admotors.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/admotors.png",
+        "backgroundColor": "#1a1a1a"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.amolper.ADMotorsApp"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1fc7b640-f21d-454b-b8ce-496f536a65da"
+      }
+    }
+  }
+}
