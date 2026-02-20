@@ -165,6 +165,6 @@ Este proyecto está bajo la Licencia MIT. Ver archivo `LICENSE` para más detall
 
 ---
 
-## 🙏 Agradecimientos
+## 🙏 Colaboración con AD Motor´s
 
 - AD Motor´s - (https://www.instagram.com/vehiculosadmotors)
