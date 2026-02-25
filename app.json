@@ -89,7 +89,7 @@
     "description": "Aplicación móvil para gestionar vehículos con imágenes en la nube",
     "extra": {
       "eas": {
-        "projectId": "tu-project-id-aqui"
+        "projectId": ""
       }
     }
   }
