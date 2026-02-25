@@ -9,11 +9,11 @@ import {
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 //import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import HomeScreen from './src/screens/HomeScreen';
-import ListVehiculosScreen from './src/screens/ListVehiculosScreen';
-import AnadirVehiculoScreen from './src/screens/AnadirVehiculoScreen';
-import DetalleVehiculoScreen from './src/screens/DetalleVehiculoScreen';
-import EditarVehiculoScreen from './src/screens/EditarVehiculoScreen';
+import HomeScreen from './src/screens/homeScreen';
+import ListVehiculosScreen from './src/screens/listVehiculosScreen';
+import AnadirVehiculoScreen from './src/screens/anadirVehiculoScreen';
+import DetalleVehiculoScreen from './src/screens/detalleVehiculoScreen';
+import EditarVehiculoScreen from './src/screens/editarVehiculoScreen';
 import { RootStackParamList } from './src/types';
 import { supabase } from './src/config/supabase';
 

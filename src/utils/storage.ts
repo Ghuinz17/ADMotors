@@ -1,7 +1,7 @@
 // src/utils/storage.ts
+// ✅ CORREGIDO - Sin dependencias de crypto, compatible Expo
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Sistema de almacenamiento local de la aplicación
@@ -14,26 +14,41 @@ const USER_PREFERENCES_KEY = 'USER_PREFERENCES';
 const LAST_SYNC_KEY = 'LAST_SYNC';
 
 /**
+ * 🔧 GENERADOR DE IDS SIN CRYPTO
+ * Compatible con Expo (no requiere crypto.getRandomValues)
+ */
+function generateSimpleId(): string {
+  const timestamp = Date.now().toString(36);
+  const randomPart = Math.random().toString(36).substring(2, 15);
+  return `${timestamp}-${randomPart}`;
+}
+
+/**
  * AppStorage - Utilidades de almacenamiento
  */
 export const AppStorage = {
   /**
-   * Obtener o crear Device ID único para el dispositivo
+   * ✅ OBTENER O CREAR DEVICE ID
+   * Sin uuid, sin crypto - compatible Expo
    */
   async getDeviceId(): Promise<string> {
     try {
       let deviceId = await AsyncStorage.getItem(DEVICE_ID_KEY);
       
       if (!deviceId) {
-        deviceId = `device-${uuidv4()}`;
+        // Generar ID sin usar uuid
+        deviceId = `device-${generateSimpleId()}`;
         await AsyncStorage.setItem(DEVICE_ID_KEY, deviceId);
         console.log('✅ Device ID creado:', deviceId);
+      } else {
+        console.log('✅ Device ID recuperado:', deviceId);
       }
       
       return deviceId;
     } catch (error) {
-      console.error('Error al obtener Device ID:', error);
-      return `device-${uuidv4()}`;
+      console.error('❌ Error al obtener Device ID:', error);
+      // Fallback: generar ID temporal
+      return `device-${generateSimpleId()}`;
     }
   },
 
@@ -45,7 +60,7 @@ export const AppStorage = {
       await AsyncStorage.setItem(key, value);
       console.log(`✅ Datos guardados: ${key}`);
     } catch (error) {
-      console.error(`Error al guardar ${key}:`, error);
+      console.error(`❌ Error al guardar ${key}:`, error);
     }
   },
 
@@ -56,7 +71,7 @@ export const AppStorage = {
     try {
       return await AsyncStorage.getItem(key);
     } catch (error) {
-      console.error(`Error al obtener ${key}:`, error);
+      console.error(`❌ Error al obtener ${key}:`, error);
       return null;
     }
   },
@@ -69,7 +84,7 @@ export const AppStorage = {
       await AsyncStorage.setItem(key, JSON.stringify(value));
       console.log(`✅ JSON guardado: ${key}`);
     } catch (error) {
-      console.error(`Error al guardar JSON ${key}:`, error);
+      console.error(`❌ Error al guardar JSON ${key}:`, error);
     }
   },
 
@@ -81,7 +96,7 @@ export const AppStorage = {
       const data = await AsyncStorage.getItem(key);
       return data ? JSON.parse(data) : null;
     } catch (error) {
-      console.error(`Error al obtener JSON ${key}:`, error);
+      console.error(`❌ Error al obtener JSON ${key}:`, error);
       return null;
     }
   },
@@ -94,7 +109,7 @@ export const AppStorage = {
       await AsyncStorage.removeItem(key);
       console.log(`✅ Datos eliminados: ${key}`);
     } catch (error) {
-      console.error(`Error al eliminar ${key}:`, error);
+      console.error(`❌ Error al eliminar ${key}:`, error);
     }
   },
 
@@ -106,7 +121,7 @@ export const AppStorage = {
       await AsyncStorage.clear();
       console.log('✅ Storage limpiado completamente');
     } catch (error) {
-      console.error('Error al limpiar storage:', error);
+      console.error('❌ Error al limpiar storage:', error);
     }
   },
 
@@ -118,7 +133,7 @@ export const AppStorage = {
       const keys = await AsyncStorage.getAllKeys();
       return Array.isArray(keys) ? keys : [];
     } catch (error) {
-      console.error('Error al obtener todas las claves:', error);
+      console.error('❌ Error al obtener todas las claves:', error);
       return [];
     }
   },
@@ -185,7 +200,7 @@ export const AppStorage = {
 
       return diferencia >= minutosTranscurridos;
     } catch (error) {
-      console.error('Error al verificar sync:', error);
+      console.error('❌ Error al verificar sync:', error);
       return true;
     }
   },

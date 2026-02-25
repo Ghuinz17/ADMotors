@@ -1,6 +1,6 @@
 // src/screens/ListVehiculosScreen.tsx
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,23 +12,25 @@ import {
   ViewStyle,
   TextStyle,
   RefreshControl,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList, Vehiculo } from '../types';
-import { Colors } from '../constants/colors';
-import { spacing } from '../styles/global';
-import Header from '../components/header';
-import { SupabaseVehiculoService } from '../services';
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList, Vehiculo } from "../types";
+import { Colors } from "../constants/colors";
+import { spacing } from "../styles/global";
+import Header from "../components/header";
+import { SupabaseVehiculoService } from "../services";
 
 type ListVehiculosScreenProps = NativeStackScreenProps<
   RootStackParamList,
-  'ListVehiculos'
+  "ListVehiculos"
 >;
 
-const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({ navigation }) => {
+const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({
+  navigation,
+}) => {
   const insets = useSafeAreaInsets();
   const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,19 +39,19 @@ const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({ navigation })
   useFocusEffect(
     useCallback(() => {
       cargarVehiculos();
-    }, [])
+    }, []),
   );
 
   const cargarVehiculos = async () => {
     try {
-      console.log('Cargando lista de vehiculos...');
+      console.log("Cargando lista de vehiculos...");
       setLoading(true);
       const data = await SupabaseVehiculoService.getVehiculos();
       setVehiculos(data);
       console.log(`${data.length} vehiculos cargados`);
     } catch (error) {
-      console.error('Error al cargar vehiculos:', error);
-      Alert.alert('Error', 'No se pudieron cargar los vehiculos');
+      console.error("Error al cargar vehiculos:", error);
+      Alert.alert("Error", "No se pudieron cargar los vehiculos");
     } finally {
       setLoading(false);
     }
@@ -62,11 +64,11 @@ const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({ navigation })
   };
 
   const handleAgregarVehiculo = () => {
-    navigation.navigate('AnadirVehiculo');
+    navigation.navigate("AnadirVehiculo");
   };
 
   const handleVerDetalle = (vehiculoId: string) => {
-    navigation.navigate('DetalleVehiculo', { vehiculoId });
+    navigation.navigate("DetalleVehiculo", { vehiculoId });
   };
 
   const renderVehiculo = ({ item }: { item: Vehiculo }) => (
@@ -98,7 +100,11 @@ const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({ navigation })
 
         {item.color && (
           <View style={styles.detailRow}>
-            <Ionicons name="color-palette" size={16} color={Colors.textSecondary} />
+            <Ionicons
+              name="color-palette"
+              size={16}
+              color={Colors.textSecondary}
+            />
             <Text style={styles.detalleText}>{item.color}</Text>
           </View>
         )}
@@ -115,7 +121,7 @@ const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({ navigation })
           <Text style={styles.fechaText}>
             {item.fecha_creacion
               ? new Date(item.fecha_creacion).toLocaleDateString()
-              : 'Fecha no disponible'}
+              : "Fecha no disponible"}
           </Text>
         </View>
         <Ionicons name="chevron-forward" size={20} color={Colors.primary} />
@@ -168,10 +174,16 @@ const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({ navigation })
         },
       ]}
     >
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back" size={24} color={Colors.primary} />
+      </TouchableOpacity>
       <View style={styles.headerContainer}>
         <Text style={styles.headerTitle}>Mis vehículos</Text>
         <Text style={styles.headerSubtitle}>
-          {vehiculos.length} vehículo{vehiculos.length !== 1 ? 's' : ''}
+          {vehiculos.length} vehículo{vehiculos.length !== 1 ? "s" : ""}
         </Text>
       </View>
 
@@ -209,8 +221,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryBackground,
   } as ViewStyle,
   centerContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   } as ViewStyle,
   headerContainer: {
     paddingHorizontal: spacing.lg,
@@ -220,7 +232,7 @@ const styles = StyleSheet.create({
   } as ViewStyle,
   headerTitle: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: "700",
     color: Colors.textPrimary,
   } as TextStyle,
   headerSubtitle: {
@@ -237,7 +249,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondaryBackground,
     borderRadius: 16,
     marginBottom: spacing.lg,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderLeftWidth: 4,
     borderLeftColor: Colors.primary,
     elevation: 2,
@@ -247,16 +259,16 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   } as ViewStyle,
   cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
     paddingBottom: spacing.md,
   } as ViewStyle,
   cardTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
     gap: spacing.md,
   } as ViewStyle,
@@ -265,7 +277,7 @@ const styles = StyleSheet.create({
   } as ViewStyle,
   vehiculoMarca: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
     color: Colors.textPrimary,
   } as TextStyle,
   vehiculoAno: {
@@ -285,7 +297,7 @@ const styles = StyleSheet.create({
   badgeText: {
     color: Colors.textPrimary,
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: "600",
   } as TextStyle,
   cardContent: {
     paddingHorizontal: spacing.lg,
@@ -293,8 +305,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   } as ViewStyle,
   detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.md,
   } as ViewStyle,
   detalleText: {
@@ -304,14 +316,14 @@ const styles = StyleSheet.create({
   } as TextStyle,
   precio: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: Colors.primary,
     flex: 1,
   } as TextStyle,
   cardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     backgroundColor: Colors.tertiaryBackground,
@@ -319,8 +331,8 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.primaryBackground,
   } as ViewStyle,
   footerInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm,
   } as ViewStyle,
   fechaText: {
@@ -329,48 +341,48 @@ const styles = StyleSheet.create({
   } as TextStyle,
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: spacing.lg,
   } as ViewStyle,
   emptyText: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     color: Colors.textPrimary,
     marginTop: spacing.lg,
-    textAlign: 'center',
+    textAlign: "center",
   } as TextStyle,
   emptySubtext: {
     fontSize: 14,
     color: Colors.textSecondary,
     marginTop: spacing.sm,
     marginBottom: spacing.lg,
-    textAlign: 'center',
+    textAlign: "center",
   } as TextStyle,
   emptyButton: {
     backgroundColor: Colors.primary,
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.lg,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
     gap: spacing.sm,
   } as ViewStyle,
   emptyButtonText: {
     color: Colors.textPrimary,
-    fontWeight: '600',
+    fontWeight: "600",
     fontSize: 14,
   } as TextStyle,
   fab: {
-    position: 'absolute',
+    position: "absolute",
     right: spacing.lg,
     bottom: spacing.lg,
     width: 56,
     height: 56,
     borderRadius: 28,
     backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     elevation: 6,
     shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 3 },
@@ -382,6 +394,18 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     fontSize: 14,
   } as TextStyle,
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    marginTop: 10,
+  },
+  backText: {
+    marginLeft: 5,
+    fontSize: 16,
+    color: Colors.primary,
+    fontWeight: "600",
+  },
 });
 
 export default ListVehiculosScreen;
