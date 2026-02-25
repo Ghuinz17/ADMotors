@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/admotors.png",
     "userInterfaceStyle": "light",
+    "backgroundColor": "#ffffff",
     "splash": {
       "image": "./assets/admotors.png",
       "resizeMode": "contain",
@@ -18,40 +19,25 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Permitir acceso a tus fotos para seleccionar imágenes de vehículos",
-          "cameraPermission": "Permitir acceso a la cámara para tomar fotos de vehículos"
+          "photosPermission": "AD Motors necesita acceso a tus fotos para seleccionar imágenes de vehículos.",
+          "cameraPermission": "AD Motors necesita acceso a la cámara para tomar fotos de vehículos."
         }
       ]
     ],
     "ios": {
-      "supportsTabletMode": true,
+      "supportsTablet": true,
       "bundleIdentifier": "com.admotors.app",
       "buildNumber": "1",
       "icon": "./assets/admotors.png",
-      "splash": {
-        "image": "./assets/admotors.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#1a1a1a"
-      },
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "AD Motors necesita acceso a tu galería de fotos para que puedas seleccionar imágenes de tus vehículos",
-        "NSCameraUsageDescription": "AD Motors necesita acceso a tu cámara para que puedas tomar fotos de tus vehículos",
-        "NSPhotoLibraryAddOnlyUsageDescription": "AD Motors necesita guardar fotos en tu galería",
-        "NSLocationWhenInUseUsageDescription": "AD Motors puede usar tu ubicación para registrar vehículos",
-        "UIFileSharingEnabled": false,
-        "LSSupportsOpeningDocumentsInPlace": false,
+        "NSPhotoLibraryUsageDescription": "AD Motors necesita acceso a tu galería para seleccionar imágenes de tus vehículos.",
+        "NSCameraUsageDescription": "AD Motors necesita acceso a tu cámara para tomar fotos de tus vehículos.",
+        "NSPhotoLibraryAddOnlyUsageDescription": "AD Motors necesita guardar fotos en tu galería.",
         "ITSAppUsesNonExemptEncryption": false
       },
-      "entitlements": {
-        "com.apple.developer.icloud-container": [
-          "iCloud.com.admotors.app",
-          "iCloud.com.admotors.app"
-        ]
-      },
-      "runtimeVersion": {
-        "policy": "appVersion"
-      },
-      "scheme": "admotors"
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -63,33 +49,9 @@
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.RECORD_AUDIO"
-      ],
-      "intentFilters": [
-        {
-          "action": "android.intent.action.VIEW",
-          "autoVerify": true,
-          "data": {
-            "scheme": "https",
-            "host": "*.admotors.app",
-            "pathPrefix": "/"
-          },
-          "category": [
-            "android.intent.category.DEFAULT",
-            "android.intent.category.BROWSABLE"
-          ]
-        }
+        "android.permission.WRITE_EXTERNAL_STORAGE"
       ]
     },
-    "web": {
-      "favicon": "./assets/admotors.png",
-      "display": "standalone"
-    },
-    "scheme": "admotors",
-    "description": "Aplicación móvil para gestionar vehículos con imágenes en la nube",
     "extra": {
       "eas": {
         "projectId": "acd2eaae-a280-43b5-a1b8-72bc8b09ee99"
