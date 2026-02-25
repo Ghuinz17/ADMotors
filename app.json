@@ -63,7 +63,8 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION"
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.RECORD_AUDIO"
       ],
       "intentFilters": [
         {
@@ -89,8 +90,9 @@
     "description": "Aplicación móvil para gestionar vehículos con imágenes en la nube",
     "extra": {
       "eas": {
-        "projectId": ""
+        "projectId": "c0292d48-0fe4-4871-8358-e6dd13f38cb9"
       }
-    }
+    },
+    "owner": "amolper"
   }
 }
