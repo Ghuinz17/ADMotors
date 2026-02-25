@@ -39,10 +39,12 @@
         "NSPhotoLibraryAddOnlyUsageDescription": "AD Motors necesita guardar fotos en tu galería",
         "NSLocationWhenInUseUsageDescription": "AD Motors puede usar tu ubicación para registrar vehículos",
         "UIFileSharingEnabled": false,
-        "LSSupportsOpeningDocumentsInPlace": false
+        "LSSupportsOpeningDocumentsInPlace": false,
+        "ITSAppUsesNonExemptEncryption": false
       },
       "entitlements": {
         "com.apple.developer.icloud-container": [
+          "iCloud.com.admotors.app",
           "iCloud.com.admotors.app"
         ]
       },
@@ -90,9 +92,9 @@
     "description": "Aplicación móvil para gestionar vehículos con imágenes en la nube",
     "extra": {
       "eas": {
-        "projectId": "c0292d48-0fe4-4871-8358-e6dd13f38cb9"
+        "projectId": "acd2eaae-a280-43b5-a1b8-72bc8b09ee99"
       }
     },
-    "owner": "amolper"
+    "owner": "molero17"
   }
 }
