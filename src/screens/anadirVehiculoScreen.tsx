@@ -131,7 +131,11 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
         },
       ]}
     >
-      <Header title="Anadir vehiculo" onBackPress={() => navigation.goBack()} />
+      <Header 
+        title="Añadir vehículo" 
+        onBackPress={() => navigation.goBack()} 
+        showBackButton={true}
+      />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
