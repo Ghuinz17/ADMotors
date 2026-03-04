@@ -29,34 +29,33 @@
       "bundleIdentifier": "com.admotors.app",
       "buildNumber": "1",
       "icon": "./assets/admotors.png",
+      "splash": {
+        "image": "./assets/admotors.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#1a1a1a"
+      },
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "AD Motors necesita acceso a tu galería para seleccionar imágenes de tus vehículos.",
         "NSCameraUsageDescription": "AD Motors necesita acceso a tu cámara para tomar fotos de tus vehículos.",
         "NSPhotoLibraryAddOnlyUsageDescription": "AD Motors necesita guardar fotos en tu galería.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIFileSharingEnabled": false,
+        "LSSupportsOpeningDocumentsInPlace": false
       },
       "config": {
         "usesNonExemptEncryption": false
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/admotors.png",
-        "backgroundColor": "#1a1a1a"
       },
-      "package": "com.admotors.app",
-      "versionCode": 1,
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
-      ]
+      "deploymentTarget": "13.0",
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "extra": {
       "eas": {
         "projectId": "acd2eaae-a280-43b5-a1b8-72bc8b09ee99"
       }
     },
-    "owner": "molero17"
+    "owner": "molero17",
+    "description": "Gestión de vehículos con imágenes en la nube - iOS Only"
   }
 }

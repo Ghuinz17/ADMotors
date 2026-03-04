@@ -1,5 +1,3 @@
-// src/screens/AnadirVehiculoScreen.tsx
-
 import React, { useState } from 'react';
 import {
   View,
@@ -61,11 +59,12 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
 
   const handleAgregarImagen = async () => {
     try {
-      const imageUri = await ImageService.pickImageFromGallery();
-      if (imageUri) {
+      const imageResult = await ImageService.pickImageFromGallery();
+      if (imageResult) {
+        // GUARDAR BASE64
         setFormData({
           ...formData,
-          imagenes: [...formData.imagenes, imageUri],
+          imagenes: [...formData.imagenes, imageResult.base64],
         });
       }
     } catch (error) {
@@ -76,11 +75,12 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
 
   const handleTamarFoto = async () => {
     try {
-      const imageUri = await ImageService.takePictureFromCamera();
-      if (imageUri) {
+      const imageResult = await ImageService.takePictureFromCamera();
+      if (imageResult) {
+        // GUARDAR BASE64
         setFormData({
           ...formData,
-          imagenes: [...formData.imagenes, imageUri],
+          imagenes: [...formData.imagenes, imageResult.base64],
         });
       }
     } catch (error) {
@@ -243,8 +243,8 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
               <Text style={styles.imageCountText}>
                 {formData.imagenes.length} imagen{formData.imagenes.length > 1 ? 'es' : ''} seleccionada{formData.imagenes.length > 1 ? 's' : ''}
               </Text>
-              {formData.imagenes.map((imageUri, index) => (
-                <View key={`${imageUri}-${index}`} style={styles.imagePreviewItem}>
+              {formData.imagenes.map((base64String, index) => (
+                <View key={`image-${index}`} style={styles.imagePreviewItem}>
                   <View style={styles.imagePreview}>
                     <Ionicons name="image" size={30} color={Colors.textTertiary} />
                   </View>
