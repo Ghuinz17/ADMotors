@@ -1,3 +1,5 @@
+// src/screens/ListVehiculosScreen.tsx
+
 import React, { useState, useCallback } from "react";
 import {
   View,
@@ -172,13 +174,14 @@ const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({
         },
       ]}
     >
-      <Header 
-        title="Mis vehículos" 
-        onBackPress={() => navigation.goBack()} 
-        showBackButton={true}
-      />
-
-      <View style={styles.subtitleContainer}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back" size={24} color={Colors.primary} />
+      </TouchableOpacity>
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>Mis vehículos</Text>
         <Text style={styles.headerSubtitle}>
           {vehiculos.length} vehículo{vehiculos.length !== 1 ? "s" : ""}
         </Text>
@@ -221,15 +224,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   } as ViewStyle,
-  subtitleContainer: {
+  headerContainer: {
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.lg,
     borderBottomWidth: 1,
     borderBottomColor: Colors.tertiaryBackground,
   } as ViewStyle,
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+  } as TextStyle,
   headerSubtitle: {
     fontSize: 13,
     color: Colors.textSecondary,
+    marginTop: spacing.sm,
   } as TextStyle,
   listContent: {
     paddingHorizontal: spacing.lg,
@@ -385,6 +394,18 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     fontSize: 14,
   } as TextStyle,
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    marginTop: 10,
+  },
+  backText: {
+    marginLeft: 5,
+    fontSize: 16,
+    color: Colors.primary,
+    fontWeight: "600",
+  },
 });
 
 export default ListVehiculosScreen;

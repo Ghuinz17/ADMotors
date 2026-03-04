@@ -1,3 +1,6 @@
+// src/screens/AnadirVehiculoScreen.tsx
+// ✅ VERSIÓN SIMPLE ORIGINAL
+
 import React, { useState } from 'react';
 import {
   View,
@@ -61,7 +64,6 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
     try {
       const imageResult = await ImageService.pickImageFromGallery();
       if (imageResult) {
-        // GUARDAR BASE64
         setFormData({
           ...formData,
           imagenes: [...formData.imagenes, imageResult.base64],
@@ -77,7 +79,6 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
     try {
       const imageResult = await ImageService.takePictureFromCamera();
       if (imageResult) {
-        // GUARDAR BASE64
         setFormData({
           ...formData,
           imagenes: [...formData.imagenes, imageResult.base64],
@@ -131,6 +132,7 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
         },
       ]}
     >
+      {/* ✅ HEADER SIMPLE */}
       <Header 
         title="Añadir vehículo" 
         onBackPress={() => navigation.goBack()} 
