@@ -1,5 +1,3 @@
-// src/screens/DetalleVehiculoScreen.tsx
-
 import React, { useState, useEffect } from 'react';
 import {
   View,

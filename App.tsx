@@ -7,7 +7,6 @@ import {
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-//import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import HomeScreen from './src/screens/homeScreen';
 import ListVehiculosScreen from './src/screens/listVehiculosScreen';
@@ -20,31 +19,7 @@ import { supabase } from './src/config/supabase';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
- /** // Inicializar autenticacion al cargar la app
-  useEffect(() => {
-    signInAnonymously();
-  }, []);
 
-  
-   * Loguearse como usuario anonimo
-   * Esto es necesario para que el usuario pueda:
-   * - Subir imagenes a Storage
-   * - Guardar datos en las tablas
- 
-  async function signInAnonymously() {
-    try {
-      const { data, error } = await supabase.auth.signInAnonymously();
-      
-      if (error) {
-        console.error('Error de autenticacion Supabase:', error.message);
-      } else {
-        console.log('✅ Usuario autenticado anonimamente:', data.user?.id);
-      }
-    } catch (error) {
-      console.error('Error al autenticar:', error);
-    }
-  }
-  */
   return (
     <SafeAreaProvider>
       <NavigationContainer>

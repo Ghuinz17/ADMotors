@@ -1,7 +1,5 @@
-// src/services/imageService.ts
-// ✅ iOS ONLY - Base64 Directo
-
 import * as ImagePicker from 'expo-image-picker';
+import { Platform } from 'react-native';
 
 export interface ImagePickerResult {
   uri: string;
@@ -11,48 +9,47 @@ export interface ImagePickerResult {
 
 export const ImageService = {
   /**
-   * 📱 SOLICITAR PERMISO DE GALERÍA
+   * SOLICITAR PERMISO DE GALERÍA
    */
   async requestGalleryPermission(): Promise<boolean> {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       
       if (status !== 'granted') {
-        console.warn('⚠️ Permiso de galería denegado');
+        console.warn('Permiso de galería denegado');
         return false;
       }
       
-      console.log('✅ Permiso de galería otorgado');
+      console.log('Permiso de galería otorgado');
       return true;
     } catch (error) {
-      console.error('❌ Error al solicitar permisos de galería:', error);
+      console.error('Error al solicitar permisos de galería:', error);
       return false;
     }
   },
 
   /**
-   * 📱 SOLICITAR PERMISO DE CÁMARA
+   * SOLICITAR PERMISO DE CÁMARA
    */
   async requestCameraPermission(): Promise<boolean> {
     try {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       
       if (status !== 'granted') {
-        console.warn('⚠️ Permiso de cámara denegado');
+        console.warn('Permiso de cámara denegado');
         return false;
       }
       
-      console.log('✅ Permiso de cámara otorgado');
+      console.log('Permiso de cámara otorgado');
       return true;
     } catch (error) {
-      console.error('❌ Error al solicitar permisos de cámara:', error);
+      console.error('Error al solicitar permisos de cámara:', error);
       return false;
     }
   },
 
   /**
-   * 🖼️ SELECCIONAR IMAGEN DE GALERÍA
-   * ✅ Retorna BASE64 directamente
+   * SELECCIONAR IMAGEN DE GALERÍA
    */
   async pickImageFromGallery(): Promise<ImagePickerResult | null> {
     try {
@@ -63,11 +60,10 @@ export const ImageService = {
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'],
-        allowsEditing: true,
-        aspect: [4, 3],
+        allowsEditing: false, 
         quality: 0.8,
-        base64: true, // ✅ OBTENER BASE64 DIRECTAMENTE
-        exif: false,   // No incluir datos EXIF
+        base64: true,
+        exif: false,
       });
 
       if (result.canceled || !result.assets || result.assets.length === 0) {
@@ -77,27 +73,25 @@ export const ImageService = {
 
       const asset = result.assets[0];
 
-      // Verificar que tenemos base64
       if (!asset.base64) {
-        console.error('❌ No se obtuvo base64 de la imagen');
+        console.error('No se obtuvo base64 de la imagen');
         return null;
       }
 
-      console.log('✅ Imagen seleccionada (galería) con base64');
+      console.log('Imagen seleccionada (galería) con base64');
       return {
         uri: asset.uri,
         base64: asset.base64,
         fileName: `image-${Date.now()}.jpg`,
       };
     } catch (error) {
-      console.error('❌ Error al seleccionar imagen:', error);
+      console.error('Error al seleccionar imagen:', error);
       return null;
     }
   },
 
   /**
-   * 📷 TOMAR FOTO CON CÁMARA
-   * ✅ Retorna BASE64 directamente
+   * TOMAR FOTO CON CÁMARA
    */
   async takePictureFromCamera(): Promise<ImagePickerResult | null> {
     try {
@@ -108,11 +102,10 @@ export const ImageService = {
 
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ['images'],
-        allowsEditing: true,
-        aspect: [4, 3],
+        allowsEditing: false,
         quality: 0.8,
-        base64: true, // ✅ OBTENER BASE64 DIRECTAMENTE
-        exif: false,   // No incluir datos EXIF
+        base64: true,
+        exif: false,
       });
 
       if (result.canceled || !result.assets || result.assets.length === 0) {
@@ -122,26 +115,25 @@ export const ImageService = {
 
       const asset = result.assets[0];
 
-      // Verificar que tenemos base64
       if (!asset.base64) {
-        console.error('❌ No se obtuvo base64 de la foto');
+        console.error('No se obtuvo base64 de la foto');
         return null;
       }
 
-      console.log('✅ Foto tomada (cámara) con base64');
+      console.log('Foto tomada (cámara) con base64');
       return {
         uri: asset.uri,
         base64: asset.base64,
         fileName: `photo-${Date.now()}.jpg`,
       };
     } catch (error) {
-      console.error('❌ Error al tomar foto:', error);
+      console.error('Error al tomar foto:', error);
       return null;
     }
   },
 
   /**
-   * 🔧 GENERAR NOMBRE DE ARCHIVO
+   * GENERAR NOMBRE DE ARCHIVO
    */
   generateFileName(timestamp: string = ''): string {
     const time = timestamp || Date.now().toString();
@@ -150,7 +142,7 @@ export const ImageService = {
   },
 
   /**
-   * 🔧 OBTENER MIME TYPE
+   * OBTENER MIME TYPE
    */
   getMimeType(): string {
     return 'image/jpeg';

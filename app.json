@@ -50,12 +50,32 @@
         "policy": "appVersion"
       }
     },
+    "android": {
+      "package": "com.admotors.app",
+      "versionCode": 1,
+      "icon": "./assets/admotors.png",
+      "splash": {
+        "image": "./assets/admotors.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#1a1a1a"
+      },
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/admotors.png",
+        "backgroundColor": "#1a1a1a"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_IMAGES"
+      ]
+    },
     "extra": {
       "eas": {
         "projectId": "acd2eaae-a280-43b5-a1b8-72bc8b09ee99"
       }
     },
     "owner": "molero17",
-    "description": "Gestión de vehículos con imágenes en la nube - iOS Only"
+    "description": "Gestión de vehículos con imágenes en la nube - Android + iOS"
   }
 }

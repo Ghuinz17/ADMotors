@@ -1,6 +1,3 @@
-// src/screens/AnadirVehiculoScreen.tsx
-// ✅ VERSIÓN SIMPLE ORIGINAL
-
 import React, { useState } from 'react';
 import {
   View,
@@ -132,7 +129,6 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
         },
       ]}
     >
-      {/* ✅ HEADER SIMPLE */}
       <Header 
         title="Añadir vehículo" 
         onBackPress={() => navigation.goBack()} 
@@ -144,8 +140,6 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.form}>
-          <Text style={styles.formTitle}>Añadir nuevo vehículo</Text>
-
           <Text style={styles.label}>Marca y modelo *</Text>
           <Input
             placeholder="Ej: Toyota Corolla 2024"

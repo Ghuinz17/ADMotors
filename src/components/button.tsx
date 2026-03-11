@@ -1,5 +1,3 @@
-// src/components/Button.tsx
-
 import React from 'react';
 import {
   TouchableOpacity,

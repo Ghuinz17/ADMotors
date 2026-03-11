@@ -249,7 +249,7 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
             icon="speedometer"
           />
 
-          <Text style={styles.label}>Color</Text>
+          <Text style={styles.label}>Color *</Text>
           <Input
             placeholder="Ej: Rojo, Azul..."
             value={formData.color}

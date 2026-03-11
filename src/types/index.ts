@@ -1,5 +1,3 @@
-// src/types/index.ts - Tipos actualizados
-
 // Enums
 export enum CombustibleType {
   GASOLINA = 'GASOLINA',

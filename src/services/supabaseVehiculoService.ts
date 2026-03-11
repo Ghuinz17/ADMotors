@@ -1,6 +1,3 @@
-// src/services/supabaseVehiculoService.ts
-// ✅ iOS ONLY - Base64 Directo
-
 import { supabase } from '../config/supabase';
 import { Vehiculo, VehiculoFormData } from '../types';
 import { AppStorage } from '../utils/storage';
@@ -9,12 +6,12 @@ import { Platform } from 'react-native';
 
 export const SupabaseVehiculoService = {
   /**
-   * 📱 OBTENER TODOS LOS VEHÍCULOS
+   * OBTENER TODOS LOS VEHÍCULOS
    */
   async getVehiculos(): Promise<Vehiculo[]> {
     try {
       const deviceId = await AppStorage.getDeviceId();
-      console.log('🔍 Buscando vehículos para el Device ID:', deviceId);
+      console.log('Buscando vehículos para el Device ID:', deviceId);
 
       const { data, error } = await supabase
         .from('vehiculo')
@@ -25,21 +22,21 @@ export const SupabaseVehiculoService = {
       if (error) throw error;
 
       const count = data?.length || 0;
-      console.log(`✅ ${count} vehículos obtenidos`);
+      console.log(`${count} vehículos obtenidos`);
       return data || [];
     } catch (error) {
-      console.error('❌ Error al obtener vehículos:', error);
+      console.error('Error al obtener vehículos:', error);
       return [];
     }
   },
 
   /**
-   * 📱 OBTENER VEHÍCULO POR ID
+   * OBTENER VEHÍCULO POR ID
    */
   async getVehiculoById(id: string): Promise<Vehiculo | null> {
     try {
       const deviceId = await AppStorage.getDeviceId();
-      console.log(`📱 Obteniendo vehículo: ${id}`);
+      console.log(`Obteniendo vehículo: ${id}`);
 
       const { data, error } = await supabase
         .from('vehiculo')
@@ -51,21 +48,21 @@ export const SupabaseVehiculoService = {
       if (error && error.code !== 'PGRST116') throw error;
 
       if (data) {
-        console.log('✅ Vehículo obtenido correctamente');
+        console.log('Vehículo obtenido correctamente');
       }
       return data || null;
     } catch (error) {
-      console.error('❌ Error al obtener vehículo:', error);
+      console.error('Error al obtener vehículo:', error);
       return null;
     }
   },
 
   /**
-   * 🖼️ OBTENER IMÁGENES DEL VEHÍCULO
+   * OBTENER IMÁGENES DEL VEHÍCULO
    */
   async getImagenesVehiculo(vehiculoId: string): Promise<string[]> {
     try {
-      console.log(`🖼️ Obteniendo imágenes...`);
+      console.log(`Obteniendo imágenes...`);
 
       const { data, error } = await supabase
         .from('vehiculo_imagenes')
@@ -82,25 +79,25 @@ export const SupabaseVehiculoService = {
         return urlData.publicUrl;
       });
 
-      console.log(`✅ ${urls.length} imágenes obtenidas`);
+      console.log(`${urls.length} imágenes obtenidas`);
       return urls;
     } catch (error) {
-      console.error('❌ Error al obtener imágenes:', error);
+      console.error('Error al obtener imágenes:', error);
       return [];
     }
   },
 
   /**
-   * ➕ CREAR VEHÍCULO CON IMÁGENES
+   * CREAR VEHÍCULO CON IMÁGENES
    */
   async createVehiculo(formData: VehiculoFormData): Promise<string> {
     try {
       const deviceId = await AppStorage.getDeviceId();
       const vehiculoId = `v-${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
-      console.log(`📝 Creando vehículo: ${vehiculoId}`);
+      console.log(`Creando vehículo: ${vehiculoId}`);
 
-      // 1️⃣ CREAR VEHÍCULO EN BASE DE DATOS
+      // CREAR VEHÍCULO EN BASE DE DATOS
       const { data, error } = await supabase
         .from('vehiculo')
         .insert([
@@ -122,27 +119,27 @@ export const SupabaseVehiculoService = {
 
       if (error) throw error;
 
-      console.log(`✅ Vehículo creado: ${vehiculoId}`);
+      console.log(`Vehículo creado: ${vehiculoId}`);
 
-      // 2️⃣ SUBIR IMÁGENES CON BASE64
+      //SUBIR IMÁGENES CON BASE64
       if (formData.imagenes && formData.imagenes.length > 0) {
         await this.subirImagenesBase64(vehiculoId, formData.imagenes);
       }
 
       return vehiculoId;
     } catch (error) {
-      console.error('❌ Error al crear vehículo:', error);
+      console.error('Error al crear vehículo:', error);
       throw error;
     }
   },
 
   /**
-   * ✏️ ACTUALIZAR VEHÍCULO
+   * ACTUALIZAR VEHÍCULO
    */
   async updateVehiculo(id: string, formData: VehiculoFormData): Promise<void> {
     try {
       const deviceId = await AppStorage.getDeviceId();
-      console.log(`✏️ Actualizando vehículo: ${id}`);
+      console.log(`Actualizando vehículo: ${id}`);
 
       const updateData = {
         marca_modelo: formData.marca_modelo,
@@ -163,26 +160,25 @@ export const SupabaseVehiculoService = {
 
       if (error) throw error;
 
-      console.log('✅ Vehículo actualizado correctamente');
+      console.log('Vehículo actualizado correctamente');
 
       // Subir nuevas imágenes si existen
       if (formData.imagenes && formData.imagenes.length > 0) {
         await this.subirImagenesBase64(id, formData.imagenes);
       }
     } catch (error) {
-      console.error('❌ Error al actualizar vehículo:', error);
+      console.error('Error al actualizar vehículo:', error);
       throw error;
     }
   },
 
   /**
-   * 📤 SUBIR IMÁGENES CON BASE64 (MÉTODO PRINCIPAL)
-   * ✅ Recibe los base64 directamente desde formData.imagenes
+   * SUBIR IMÁGENES CON BASE64 (MÉTODO PRINCIPAL)
    */
   async subirImagenesBase64(vehiculoId: string, imagenes: string[]): Promise<void> {
     try {
       const deviceId = await AppStorage.getDeviceId();
-      console.log(`⬆️ Subiendo ${imagenes.length} imagen(es) con Base64...`);
+      console.log(`Subiendo ${imagenes.length} imagen(es) con Base64...`);
 
       let subidosExitosos = 0;
       let errores = 0;
@@ -191,20 +187,18 @@ export const SupabaseVehiculoService = {
         const base64Data = imagenes[i];
 
         try {
-          console.log(`📤 Procesando imagen ${i + 1}/${imagenes.length}...`);
+          console.log(`Procesando imagen ${i + 1}/${imagenes.length}...`);
 
-          // ✅ SALTAR SI ES URL (ya está subida)
           if (base64Data.startsWith('http')) {
-            console.log('⏭️ URL detectada, saltando...');
+            console.log('URL detectada, saltando...');
             continue;
           }
 
           // Generar nombre del archivo
           const fileName = `${deviceId}/${vehiculoId}-${Date.now()}-${i}.jpg`;
 
-          console.log(`📤 Subiendo a Storage: ${fileName}`);
+          console.log(`Subiendo a Storage: ${fileName}`);
 
-          // ✅ DECODIFICAR BASE64 Y SUBIR A STORAGE
           const { error: uploadError } = await supabase.storage
             .from('ad-motors-images')
             .upload(fileName, decode(base64Data), {
@@ -213,15 +207,14 @@ export const SupabaseVehiculoService = {
             });
 
           if (uploadError) {
-            console.error(`❌ Error al subir a Storage:`, uploadError.message);
+            console.error(`Error al subir a Storage:`, uploadError.message);
             errores++;
             continue;
           }
 
-          console.log(`✅ Imagen subida a Storage: ${fileName}`);
+          console.log(`Imagen subida a Storage: ${fileName}`);
 
-          // ✅ REGISTRAR EN TABLA vehiculo_imagenes
-          console.log('📝 Registrando en tabla vehiculo_imagenes...');
+          console.log('Registrando en tabla vehiculo_imagenes...');
           const { error: dbError } = await supabase
             .from('vehiculo_imagenes')
             .insert([
@@ -233,34 +226,34 @@ export const SupabaseVehiculoService = {
             ]);
 
           if (dbError) {
-            console.error(`❌ Error al registrar en BD:`, dbError.message);
+            console.error(`Error al registrar en BD:`, dbError.message);
             errores++;
             continue;
           }
 
-          console.log('✅ Imagen registrada en base de datos');
+          console.log('Imagen registrada en base de datos');
           subidosExitosos++;
         } catch (itemError) {
-          console.error(`❌ Error procesando imagen ${i}:`, itemError);
+          console.error(`Error procesando imagen ${i}:`, itemError);
           errores++;
         }
       }
 
       console.log(
-        `📊 RESUMEN UPLOAD: ${subidosExitosos} exitosas, ${errores} errores`
+        `RESUMEN UPLOAD: ${subidosExitosos} exitosas, ${errores} errores`
       );
     } catch (error) {
-      console.error('❌ Error general en subirImagenesBase64:', error);
+      console.error('Error general en subirImagenesBase64:', error);
     }
   },
 
   /**
-   * 🗑️ ELIMINAR VEHÍCULO Y SUS IMÁGENES
+   * ELIMINAR VEHÍCULO Y SUS IMÁGENES
    */
   async deleteVehiculo(id: string): Promise<void> {
     try {
       const deviceId = await AppStorage.getDeviceId();
-      console.log(`🗑️ Eliminando vehículo: ${id}`);
+      console.log(`Eliminando vehículo: ${id}`);
 
       // Obtener imágenes
       const { data: imgs } = await supabase
@@ -270,14 +263,14 @@ export const SupabaseVehiculoService = {
 
       // Eliminar del Storage
       if (imgs && imgs.length > 0) {
-        console.log(`🗑️ Eliminando ${imgs.length} imágenes del Storage...`);
+        console.log(`Eliminando ${imgs.length} imágenes del Storage...`);
         await supabase.storage
           .from('ad-motors-images')
           .remove(imgs.map((i) => i.imagen));
       }
 
       // Eliminar de base de datos
-      console.log('🗑️ Eliminando registro de base de datos...');
+      console.log('Eliminando registro de base de datos...');
       const { error } = await supabase
         .from('vehiculo')
         .delete()
@@ -286,19 +279,17 @@ export const SupabaseVehiculoService = {
 
       if (error) throw error;
 
-      console.log('✅ Vehículo eliminado correctamente');
+      console.log('Vehículo eliminado correctamente');
     } catch (error) {
-      console.error('❌ Error al eliminar:', error);
+      console.error('Error al eliminar:', error);
       throw error;
     }
   },
 
-  /**
-   * 🔗 VERIFICAR CONEXIÓN A SUPABASE
-   */
+
   async testConnection(): Promise<boolean> {
     try {
-      console.log('🔗 Probando conexión a Supabase...');
+      console.log('Probando conexión a Supabase...');
 
       const { error } = await supabase
         .from('vehiculo')
@@ -306,14 +297,14 @@ export const SupabaseVehiculoService = {
         .limit(1);
 
       if (error) {
-        console.error('❌ Error de conexión:', error);
+        console.error('Error de conexión:', error);
         return false;
       }
 
-      console.log('✅ Conexión exitosa a Supabase');
+      console.log('Conexión exitosa a Supabase');
       return true;
     } catch (error) {
-      console.error('❌ Error en test de conexión:', error);
+      console.error('Error en test de conexión:', error);
       return false;
     }
   },

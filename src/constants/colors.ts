@@ -1,5 +1,3 @@
-// src/constants/colors.ts
-
 export const Colors = {
   // Fondos
   primaryBackground: '#0a0a0a',

@@ -1,36 +1,33 @@
-// src/styles/global.ts
-
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { Colors } from '../constants/colors';
 
-// ==================== DECLARAR PRIMERO ====================
 // Spacing scale - usado en todos lados
 export const spacing = {
-  xs: 4,      // Muy pequeño
-  sm: 8,      // Pequeño
-  md: 12,     // Medio
-  lg: 16,     // Grande (más usado)
-  xl: 24,     // Extra grande
-  xxl: 32,    // Mega (márgenes principales)
+  xs: 4,      
+  sm: 8,      
+  md: 12,     
+  lg: 16,    
+  xl: 24,     
+  xxl: 32,    
 };
 
 // Border radius scale
 export const borderRadius = {
-  sm: 4,      // Muy redondeado
-  md: 8,      // Redondeado
-  lg: 16,     // Muy redondeado (botones grandes)
-  xl: 20,     // Mega redondeado
+  sm: 4,      
+  md: 8,      
+  lg: 16,     
+  xl: 20,     
 };
 
-// Font sizes (para consistencia)
+// Font sizes 
 export const fontSize = {
-  xs: 11,      // Muy pequeño (labels)
-  sm: 12,      // Pequeño (detalles)
-  md: 14,      // Medio (inputs)
-  lg: 16,      // Grande (cuerpo)
-  xl: 18,      // Extra grande (subtítulos)
-  xxl: 24,     // Mega (títulos)
-  xxxl: 36,    // Enorme (encabezados)
+  xs: 11,      
+  sm: 12,      
+  md: 14,      
+  lg: 16,      
+  xl: 18,      
+  xxl: 24,     
+  xxxl: 36,    
 };
 
 // Font weights
@@ -74,7 +71,6 @@ export const shadows = {
   },
 };
 
-// ==================== AHORA SÍ USAR EN GlobalStyles ====================
 export const GlobalStyles = StyleSheet.create({
   safeArea: {
     flex: 1,

@@ -1,5 +1,3 @@
-// src/screens/ListVehiculosScreen.tsx
-
 import React, { useState, useCallback } from "react";
 import {
   View,

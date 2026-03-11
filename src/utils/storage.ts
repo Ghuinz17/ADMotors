@@ -1,6 +1,3 @@
-// src/utils/storage.ts
-// ✅ CORREGIDO - Sin dependencias de crypto, compatible Expo
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /**
@@ -14,8 +11,7 @@ const USER_PREFERENCES_KEY = 'USER_PREFERENCES';
 const LAST_SYNC_KEY = 'LAST_SYNC';
 
 /**
- * 🔧 GENERADOR DE IDS SIN CRYPTO
- * Compatible con Expo (no requiere crypto.getRandomValues)
+ * GENERADOR DE IDS SIN CRYPTO
  */
 function generateSimpleId(): string {
   const timestamp = Date.now().toString(36);
@@ -28,8 +24,7 @@ function generateSimpleId(): string {
  */
 export const AppStorage = {
   /**
-   * ✅ OBTENER O CREAR DEVICE ID
-   * Sin uuid, sin crypto - compatible Expo
+   * OBTENER O CREAR DEVICE ID
    */
   async getDeviceId(): Promise<string> {
     try {
@@ -39,14 +34,14 @@ export const AppStorage = {
         // Generar ID sin usar uuid
         deviceId = `device-${generateSimpleId()}`;
         await AsyncStorage.setItem(DEVICE_ID_KEY, deviceId);
-        console.log('✅ Device ID creado:', deviceId);
+        console.log('Device ID creado:', deviceId);
       } else {
-        console.log('✅ Device ID recuperado:', deviceId);
+        console.log('Device ID recuperado:', deviceId);
       }
       
       return deviceId;
     } catch (error) {
-      console.error('❌ Error al obtener Device ID:', error);
+      console.error('Error al obtener Device ID:', error);
       // Fallback: generar ID temporal
       return `device-${generateSimpleId()}`;
     }
@@ -58,9 +53,9 @@ export const AppStorage = {
   async setItem(key: string, value: string): Promise<void> {
     try {
       await AsyncStorage.setItem(key, value);
-      console.log(`✅ Datos guardados: ${key}`);
+      console.log(`Datos guardados: ${key}`);
     } catch (error) {
-      console.error(`❌ Error al guardar ${key}:`, error);
+      console.error(`Error al guardar ${key}:`, error);
     }
   },
 
@@ -71,7 +66,7 @@ export const AppStorage = {
     try {
       return await AsyncStorage.getItem(key);
     } catch (error) {
-      console.error(`❌ Error al obtener ${key}:`, error);
+      console.error(`Error al obtener ${key}:`, error);
       return null;
     }
   },
@@ -82,9 +77,9 @@ export const AppStorage = {
   async setJSON(key: string, value: any): Promise<void> {
     try {
       await AsyncStorage.setItem(key, JSON.stringify(value));
-      console.log(`✅ JSON guardado: ${key}`);
+      console.log(`JSON guardado: ${key}`);
     } catch (error) {
-      console.error(`❌ Error al guardar JSON ${key}:`, error);
+      console.error(`Error al guardar JSON ${key}:`, error);
     }
   },
 
@@ -96,7 +91,7 @@ export const AppStorage = {
       const data = await AsyncStorage.getItem(key);
       return data ? JSON.parse(data) : null;
     } catch (error) {
-      console.error(`❌ Error al obtener JSON ${key}:`, error);
+      console.error(`Error al obtener JSON ${key}:`, error);
       return null;
     }
   },
@@ -107,9 +102,9 @@ export const AppStorage = {
   async removeItem(key: string): Promise<void> {
     try {
       await AsyncStorage.removeItem(key);
-      console.log(`✅ Datos eliminados: ${key}`);
+      console.log(`Datos eliminados: ${key}`);
     } catch (error) {
-      console.error(`❌ Error al eliminar ${key}:`, error);
+      console.error(`Error al eliminar ${key}:`, error);
     }
   },
 
@@ -119,9 +114,9 @@ export const AppStorage = {
   async clear(): Promise<void> {
     try {
       await AsyncStorage.clear();
-      console.log('✅ Storage limpiado completamente');
+      console.log('Storage limpiado completamente');
     } catch (error) {
-      console.error('❌ Error al limpiar storage:', error);
+      console.error('Error al limpiar storage:', error);
     }
   },
 
@@ -133,7 +128,7 @@ export const AppStorage = {
       const keys = await AsyncStorage.getAllKeys();
       return Array.isArray(keys) ? keys : [];
     } catch (error) {
-      console.error('❌ Error al obtener todas las claves:', error);
+      console.error('Error al obtener todas las claves:', error);
       return [];
     }
   },
@@ -200,7 +195,7 @@ export const AppStorage = {
 
       return diferencia >= minutosTranscurridos;
     } catch (error) {
-      console.error('❌ Error al verificar sync:', error);
+      console.error('Error al verificar sync:', error);
       return true;
     }
   },

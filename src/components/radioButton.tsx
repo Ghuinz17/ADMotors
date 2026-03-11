@@ -1,5 +1,3 @@
-// src/components/RadioButton.tsx
-
 import React from 'react';
 import {
   View,
