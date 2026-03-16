@@ -1,22 +1,18 @@
 import { supabase } from '../config/supabase';
 import { Vehiculo, VehiculoFormData } from '../types';
-import { AppStorage } from '../utils/storage';
 import { decode } from 'base64-arraybuffer';
-import { Platform } from 'react-native';
 
 export const SupabaseVehiculoService = {
   /**
-   * OBTENER TODOS LOS VEHÍCULOS
+   *  OBTENER TODOS LOS VEHÍCULOS
    */
   async getVehiculos(): Promise<Vehiculo[]> {
     try {
-      const deviceId = await AppStorage.getDeviceId();
-      console.log('Buscando vehículos para el Device ID:', deviceId);
+      console.log('Obteniendo todos los vehículos...');
 
       const { data, error } = await supabase
         .from('vehiculo')
         .select('*')
-        .eq('device_id', deviceId)
         .order('fecha_creacion', { ascending: false });
 
       if (error) throw error;
@@ -35,14 +31,12 @@ export const SupabaseVehiculoService = {
    */
   async getVehiculoById(id: string): Promise<Vehiculo | null> {
     try {
-      const deviceId = await AppStorage.getDeviceId();
       console.log(`Obteniendo vehículo: ${id}`);
 
       const { data, error } = await supabase
         .from('vehiculo')
         .select('*')
         .eq('id_vehiculo', id)
-        .eq('device_id', deviceId)
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
@@ -71,7 +65,6 @@ export const SupabaseVehiculoService = {
 
       if (error) throw error;
 
-      // Generar URLs públicas para Storage
       const urls = (data || []).map((img) => {
         const { data: urlData } = supabase.storage
           .from('ad-motors-images')
@@ -92,12 +85,10 @@ export const SupabaseVehiculoService = {
    */
   async createVehiculo(formData: VehiculoFormData): Promise<string> {
     try {
-      const deviceId = await AppStorage.getDeviceId();
       const vehiculoId = `v-${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
       console.log(`Creando vehículo: ${vehiculoId}`);
 
-      // CREAR VEHÍCULO EN BASE DE DATOS
       const { data, error } = await supabase
         .from('vehiculo')
         .insert([
@@ -109,7 +100,6 @@ export const SupabaseVehiculoService = {
             ano_fabricacion: parseInt(formData.ano_fabricacion, 10),
             tipo_combustible: formData.tipo_combustible,
             kilometraje: parseInt(formData.kilometraje, 10),
-            device_id: deviceId,
             color: formData.color || null,
             fecha_creacion: new Date().toISOString(),
             fecha_actualizacion: new Date().toISOString(),
@@ -121,7 +111,6 @@ export const SupabaseVehiculoService = {
 
       console.log(`Vehículo creado: ${vehiculoId}`);
 
-      //SUBIR IMÁGENES CON BASE64
       if (formData.imagenes && formData.imagenes.length > 0) {
         await this.subirImagenesBase64(vehiculoId, formData.imagenes);
       }
@@ -138,7 +127,6 @@ export const SupabaseVehiculoService = {
    */
   async updateVehiculo(id: string, formData: VehiculoFormData): Promise<void> {
     try {
-      const deviceId = await AppStorage.getDeviceId();
       console.log(`Actualizando vehículo: ${id}`);
 
       const updateData = {
@@ -155,14 +143,12 @@ export const SupabaseVehiculoService = {
       const { error } = await supabase
         .from('vehiculo')
         .update(updateData)
-        .eq('id_vehiculo', id)
-        .eq('device_id', deviceId);
+        .eq('id_vehiculo', id);
 
       if (error) throw error;
 
       console.log('Vehículo actualizado correctamente');
 
-      // Subir nuevas imágenes si existen
       if (formData.imagenes && formData.imagenes.length > 0) {
         await this.subirImagenesBase64(id, formData.imagenes);
       }
@@ -173,12 +159,11 @@ export const SupabaseVehiculoService = {
   },
 
   /**
-   * SUBIR IMÁGENES CON BASE64 (MÉTODO PRINCIPAL)
+   * SUBIR IMÁGENES CON BASE64
    */
   async subirImagenesBase64(vehiculoId: string, imagenes: string[]): Promise<void> {
     try {
-      const deviceId = await AppStorage.getDeviceId();
-      console.log(`Subiendo ${imagenes.length} imagen(es) con Base64...`);
+      console.log(`⬆️ Subiendo ${imagenes.length} imagen(es)...`);
 
       let subidosExitosos = 0;
       let errores = 0;
@@ -190,14 +175,11 @@ export const SupabaseVehiculoService = {
           console.log(`Procesando imagen ${i + 1}/${imagenes.length}...`);
 
           if (base64Data.startsWith('http')) {
-            console.log('URL detectada, saltando...');
+            console.log('⏭️ URL detectada, saltando...');
             continue;
           }
 
-          // Generar nombre del archivo
-          const fileName = `${deviceId}/${vehiculoId}-${Date.now()}-${i}.jpg`;
-
-          console.log(`Subiendo a Storage: ${fileName}`);
+          const fileName = `${vehiculoId}-${Date.now()}-${i}.jpg`;
 
           const { error: uploadError } = await supabase.storage
             .from('ad-motors-images')
@@ -212,9 +194,8 @@ export const SupabaseVehiculoService = {
             continue;
           }
 
-          console.log(`Imagen subida a Storage: ${fileName}`);
+          console.log(`Imagen subida: ${fileName}`);
 
-          console.log('Registrando en tabla vehiculo_imagenes...');
           const { error: dbError } = await supabase
             .from('vehiculo_imagenes')
             .insert([
@@ -234,14 +215,12 @@ export const SupabaseVehiculoService = {
           console.log('Imagen registrada en base de datos');
           subidosExitosos++;
         } catch (itemError) {
-          console.error(`Error procesando imagen ${i}:`, itemError);
+          console.error(`❌ Error procesando imagen ${i}:`, itemError);
           errores++;
         }
       }
 
-      console.log(
-        `RESUMEN UPLOAD: ${subidosExitosos} exitosas, ${errores} errores`
-      );
+      console.log(`RESUMEN: ${subidosExitosos} exitosas, ${errores} errores`);
     } catch (error) {
       console.error('Error general en subirImagenesBase64:', error);
     }
@@ -252,16 +231,13 @@ export const SupabaseVehiculoService = {
    */
   async deleteVehiculo(id: string): Promise<void> {
     try {
-      const deviceId = await AppStorage.getDeviceId();
       console.log(`Eliminando vehículo: ${id}`);
 
-      // Obtener imágenes
       const { data: imgs } = await supabase
         .from('vehiculo_imagenes')
         .select('imagen')
         .eq('id_vehiculo', id);
 
-      // Eliminar del Storage
       if (imgs && imgs.length > 0) {
         console.log(`Eliminando ${imgs.length} imágenes del Storage...`);
         await supabase.storage
@@ -269,13 +245,10 @@ export const SupabaseVehiculoService = {
           .remove(imgs.map((i) => i.imagen));
       }
 
-      // Eliminar de base de datos
-      console.log('Eliminando registro de base de datos...');
       const { error } = await supabase
         .from('vehiculo')
         .delete()
-        .eq('id_vehiculo', id)
-        .eq('device_id', deviceId);
+        .eq('id_vehiculo', id);
 
       if (error) throw error;
 
@@ -286,7 +259,9 @@ export const SupabaseVehiculoService = {
     }
   },
 
-
+  /**
+   * VERIFICAR CONEXIÓN A SUPABASE
+   */
   async testConnection(): Promise<boolean> {
     try {
       console.log('Probando conexión a Supabase...');

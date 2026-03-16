@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/admotors.png",
     "userInterfaceStyle": "light",
-    "backgroundColor": "#ffffff",
+    "backgroundColor": "#1a1a1a",
     "splash": {
       "image": "./assets/admotors.png",
       "resizeMode": "contain",
@@ -24,32 +24,6 @@
         }
       ]
     ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.admotors.app",
-      "buildNumber": "1",
-      "icon": "./assets/admotors.png",
-      "splash": {
-        "image": "./assets/admotors.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#1a1a1a"
-      },
-      "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "AD Motors necesita acceso a tu galería para seleccionar imágenes de tus vehículos.",
-        "NSCameraUsageDescription": "AD Motors necesita acceso a tu cámara para tomar fotos de tus vehículos.",
-        "NSPhotoLibraryAddOnlyUsageDescription": "AD Motors necesita guardar fotos en tu galería.",
-        "ITSAppUsesNonExemptEncryption": false,
-        "UIFileSharingEnabled": false,
-        "LSSupportsOpeningDocumentsInPlace": false
-      },
-      "config": {
-        "usesNonExemptEncryption": false
-      },
-      "deploymentTarget": "13.0",
-      "runtimeVersion": {
-        "policy": "appVersion"
-      }
-    },
     "android": {
       "package": "com.admotors.app",
       "versionCode": 1,
@@ -76,6 +50,6 @@
       }
     },
     "owner": "molero17",
-    "description": "Gestión de vehículos con imágenes en la nube - Android + iOS"
+    "description": "Gestión de vehículos con imágenes en la nube - Android"
   }
 }
