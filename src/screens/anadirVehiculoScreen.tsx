@@ -9,6 +9,8 @@ import {
   ViewStyle,
   TextStyle,
   ActivityIndicator,
+  Image,
+  ImageStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -35,6 +37,8 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
     imagenes: [],
     color: '',
   });
+
+  const [imagenesPreview, setImagenesPreview] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const validateForm = (): boolean => {
@@ -61,10 +65,11 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
     try {
       const imageResult = await ImageService.pickImageFromGallery();
       if (imageResult) {
-        setFormData({
-          ...formData,
-          imagenes: [...formData.imagenes, imageResult.base64],
-        });
+        setFormData(prev => ({
+          ...prev,
+          imagenes: [...prev.imagenes, imageResult.base64],
+        }));
+        setImagenesPreview(prev => [...prev, imageResult.uri]);
       }
     } catch (error) {
       Alert.alert('Error', 'No se pudo seleccionar la imagen');
@@ -76,10 +81,11 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
     try {
       const imageResult = await ImageService.takePictureFromCamera();
       if (imageResult) {
-        setFormData({
-          ...formData,
-          imagenes: [...formData.imagenes, imageResult.base64],
-        });
+        setFormData(prev => ({
+          ...prev,
+          imagenes: [...prev.imagenes, imageResult.base64],
+        }));
+        setImagenesPreview(prev => [...prev, imageResult.uri]);
       }
     } catch (error) {
       Alert.alert('Error', 'No se pudo tomar la foto');
@@ -88,11 +94,11 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
   };
 
   const handleEliminarImagen = (index: number) => {
-    const nuevasImagenes = formData.imagenes.filter((_, i) => i !== index);
-    setFormData({
-      ...formData,
-      imagenes: nuevasImagenes,
-    });
+    setFormData(prev => ({
+      ...prev,
+      imagenes: prev.imagenes.filter((_, i) => i !== index),
+    }));
+    setImagenesPreview(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleGuardar = async () => {
@@ -129,9 +135,9 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
         },
       ]}
     >
-      <Header 
-        title="Añadir vehículo" 
-        onBackPress={() => navigation.goBack()} 
+      <Header
+        title="Añadir vehículo"
+        onBackPress={() => navigation.goBack()}
         showBackButton={true}
       />
 
@@ -140,6 +146,8 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.form}>
+          <Text style={styles.formTitle}>Añadir nuevo vehículo</Text>
+
           <Text style={styles.label}>Marca y modelo *</Text>
           <Input
             placeholder="Ej: Toyota Corolla 2024"
@@ -148,7 +156,7 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
             icon="car"
           />
 
-          <Text style={styles.label}>Descripción *</Text>
+          <Text style={styles.label}>Descripción</Text>
           <Input
             placeholder="Descripción del vehículo..."
             value={formData.descripcion}
@@ -185,7 +193,7 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
             icon="speedometer"
           />
 
-          <Text style={styles.label}>Color *</Text>
+          <Text style={styles.label}>Color</Text>
           <Input
             placeholder="Ej: Rojo, Azul..."
             value={formData.color}
@@ -217,7 +225,7 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
             />
           </View>
 
-          <Text style={styles.label}>Imagenes del vehículo</Text>
+          <Text style={styles.label}>Imágenes del vehículo</Text>
           <View style={styles.imageButtonsContainer}>
             <TouchableOpacity
               style={[styles.imageButton, styles.imageButtonGallery]}
@@ -225,7 +233,7 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
               disabled={loading}
             >
               <Ionicons name="image" size={20} color={Colors.textPrimary} />
-              <Text style={styles.imageButtonText}>Galeria</Text>
+              <Text style={styles.imageButtonText}>Galería</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -234,29 +242,33 @@ const AnadirVehiculoScreen: React.FC<AnadirVehiculoScreenProps> = ({ navigation 
               disabled={loading}
             >
               <Ionicons name="camera" size={20} color={Colors.textPrimary} />
-              <Text style={styles.imageButtonText}>Camara</Text>
+              <Text style={styles.imageButtonText}>Cámara</Text>
             </TouchableOpacity>
           </View>
 
-          {formData.imagenes.length > 0 && (
+          {imagenesPreview.length > 0 && (
             <View style={styles.imagePreviewContainer}>
               <Text style={styles.imageCountText}>
-                {formData.imagenes.length} imagen{formData.imagenes.length > 1 ? 'es' : ''} seleccionada{formData.imagenes.length > 1 ? 's' : ''}
+                {imagenesPreview.length} imagen{imagenesPreview.length > 1 ? 'es' : ''} seleccionada{imagenesPreview.length > 1 ? 's' : ''}
               </Text>
-              {formData.imagenes.map((base64String, index) => (
-                <View key={`image-${index}`} style={styles.imagePreviewItem}>
-                  <View style={styles.imagePreview}>
-                    <Ionicons name="image" size={30} color={Colors.textTertiary} />
+              <View style={styles.imageGrid}>
+                {imagenesPreview.map((uri, index) => (
+                  <View key={`image-${index}`} style={styles.imagePreviewItem}>
+                    <Image
+                      source={{ uri }}
+                      style={styles.imagePreview}
+                      resizeMode="cover"
+                    />
+                    <TouchableOpacity
+                      style={styles.removeImageButton}
+                      onPress={() => handleEliminarImagen(index)}
+                      disabled={loading}
+                    >
+                      <Ionicons name="close" size={16} color={Colors.primaryBackground} />
+                    </TouchableOpacity>
                   </View>
-                  <TouchableOpacity
-                    style={styles.removeImageButton}
-                    onPress={() => handleEliminarImagen(index)}
-                    disabled={loading}
-                  >
-                    <Ionicons name="close" size={16} color={Colors.primaryBackground} />
-                  </TouchableOpacity>
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
           )}
 
@@ -385,20 +397,22 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     marginBottom: spacing.md,
   } as TextStyle,
+  imageGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
+  } as ViewStyle,
   imagePreviewItem: {
     position: 'relative',
-    width: '30%',
-    marginRight: spacing.md,
-    marginBottom: spacing.md,
+    width: 100,
+    height: 100,
   } as ViewStyle,
   imagePreview: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
+    borderRadius: 10,
     backgroundColor: Colors.tertiaryBackground,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  } as ViewStyle,
+  } as ImageStyle,
   removeImageButton: {
     position: 'absolute',
     top: -8,

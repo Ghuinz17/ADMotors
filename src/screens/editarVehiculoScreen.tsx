@@ -9,6 +9,8 @@ import {
   ActivityIndicator,
   ViewStyle,
   TextStyle,
+  Image,
+  ImageStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,15 +23,9 @@ import Input from '../components/input';
 import RadioButton from '../components/radioButton';
 import { SupabaseVehiculoService, ImageService } from '../services';
 
-type EditarVehiculoScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'EditarVehiculo'
->;
+type EditarVehiculoScreenProps = NativeStackScreenProps<RootStackParamList, 'EditarVehiculo'>;
 
-const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
-  navigation,
-  route,
-}) => {
+const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
   const { vehiculoId } = route.params;
 
@@ -44,6 +40,8 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
     imagenes: [],
     color: '',
   });
+
+  const [imagenesPreview, setImagenesPreview] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -54,9 +52,7 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
   const cargarVehiculo = async () => {
     setLoading(true);
     try {
-      console.log('Cargando vehiculo:', vehiculoId);
       const data = await SupabaseVehiculoService.getVehiculoById(vehiculoId);
-
       if (data) {
         setVehiculo(data);
         setFormData({
@@ -69,7 +65,6 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
           imagenes: [],
           color: data.color || '',
         });
-        console.log('Vehiculo cargado correctamente');
       } else {
         Alert.alert('Error', 'Vehiculo no encontrado');
         navigation.goBack();
@@ -107,11 +102,11 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
     try {
       const imageResult = await ImageService.pickImageFromGallery();
       if (imageResult) {
-        // GUARDAR BASE64
-        setFormData({
-          ...formData,
-          imagenes: [...formData.imagenes, imageResult.base64],
-        });
+        setFormData(prev => ({
+          ...prev,
+          imagenes: [...prev.imagenes, imageResult.base64],
+        }));
+        setImagenesPreview(prev => [...prev, imageResult.uri]);
       }
     } catch (error) {
       Alert.alert('Error', 'No se pudo seleccionar la imagen');
@@ -123,11 +118,11 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
     try {
       const imageResult = await ImageService.takePictureFromCamera();
       if (imageResult) {
-        //GUARDAR BASE64
-        setFormData({
-          ...formData,
-          imagenes: [...formData.imagenes, imageResult.base64],
-        });
+        setFormData(prev => ({
+          ...prev,
+          imagenes: [...prev.imagenes, imageResult.base64],
+        }));
+        setImagenesPreview(prev => [...prev, imageResult.uri]);
       }
     } catch (error) {
       Alert.alert('Error', 'No se pudo tomar la foto');
@@ -136,11 +131,11 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
   };
 
   const handleEliminarImagen = (index: number) => {
-    const nuevasImagenes = formData.imagenes.filter((_, i) => i !== index);
-    setFormData({
-      ...formData,
-      imagenes: nuevasImagenes,
-    });
+    setFormData(prev => ({
+      ...prev,
+      imagenes: prev.imagenes.filter((_, i) => i !== index),
+    }));
+    setImagenesPreview(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleGuardar = async () => {
@@ -148,9 +143,7 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
 
     setSaving(true);
     try {
-      console.log('Actualizando vehiculo...');
       await SupabaseVehiculoService.updateVehiculo(vehiculoId, formData);
-
       Alert.alert('Exito', 'Vehiculo actualizado correctamente', [
         {
           text: 'OK',
@@ -167,16 +160,7 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
 
   if (loading) {
     return (
-      <View
-        style={[
-          styles.container,
-          styles.centerContainer,
-          {
-            paddingTop: insets.top,
-            paddingBottom: insets.bottom,
-          },
-        ]}
-      >
+      <View style={[styles.container, styles.centerContainer, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
         <ActivityIndicator size="large" color={Colors.primary} />
         <Text style={styles.loadingText}>Cargando vehículo...</Text>
       </View>
@@ -195,12 +179,9 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
         },
       ]}
     >
-      <Header title="Editar vehiculo" onBackPress={() => navigation.goBack()} />
+      <Header title="Editar vehículo" onBackPress={() => navigation.goBack()} />
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.form}>
           <Text style={styles.formTitle}>Editar vehículo</Text>
 
@@ -249,7 +230,7 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
             icon="speedometer"
           />
 
-          <Text style={styles.label}>Color *</Text>
+          <Text style={styles.label}>Color</Text>
           <Input
             placeholder="Ej: Rojo, Azul..."
             value={formData.color}
@@ -281,7 +262,7 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
             />
           </View>
 
-          <Text style={styles.label}>Imagenes adicionales</Text>
+          <Text style={styles.label}>Imágenes adicionales</Text>
           <View style={styles.imageButtonsContainer}>
             <TouchableOpacity
               style={[styles.imageButton, styles.imageButtonGallery]}
@@ -289,7 +270,7 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
               disabled={saving}
             >
               <Ionicons name="image" size={20} color={Colors.textPrimary} />
-              <Text style={styles.imageButtonText}>Galeria</Text>
+              <Text style={styles.imageButtonText}>Galería</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -298,29 +279,33 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({
               disabled={saving}
             >
               <Ionicons name="camera" size={20} color={Colors.textPrimary} />
-              <Text style={styles.imageButtonText}>Camara</Text>
+              <Text style={styles.imageButtonText}>Cámara</Text>
             </TouchableOpacity>
           </View>
 
-          {formData.imagenes.length > 0 && (
+          {imagenesPreview.length > 0 && (
             <View style={styles.imagePreviewContainer}>
               <Text style={styles.imageCountText}>
-                {formData.imagenes.length} imagen{formData.imagenes.length > 1 ? 'es' : ''} por subir
+                {imagenesPreview.length} imagen{imagenesPreview.length > 1 ? 'es' : ''} por subir
               </Text>
-              {formData.imagenes.map((base64String, index) => (
-                <View key={`image-${index}`} style={styles.imagePreviewItem}>
-                  <View style={styles.imagePreview}>
-                    <Ionicons name="image" size={30} color={Colors.textTertiary} />
+              <View style={styles.imageGrid}>
+                {imagenesPreview.map((uri, index) => (
+                  <View key={`image-${index}`} style={styles.imagePreviewItem}>
+                    <Image
+                      source={{ uri }}
+                      style={styles.imagePreview}
+                      resizeMode="cover"
+                    />
+                    <TouchableOpacity
+                      style={styles.removeImageButton}
+                      onPress={() => handleEliminarImagen(index)}
+                      disabled={saving}
+                    >
+                      <Ionicons name="close" size={16} color={Colors.primaryBackground} />
+                    </TouchableOpacity>
                   </View>
-                  <TouchableOpacity
-                    style={styles.removeImageButton}
-                    onPress={() => handleEliminarImagen(index)}
-                    disabled={saving}
-                  >
-                    <Ionicons name="close" size={16} color={Colors.primaryBackground} />
-                  </TouchableOpacity>
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
           )}
 
@@ -453,20 +438,22 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     marginBottom: spacing.md,
   } as TextStyle,
+  imageGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
+  } as ViewStyle,
   imagePreviewItem: {
     position: 'relative',
-    width: '30%',
-    marginRight: spacing.md,
-    marginBottom: spacing.md,
+    width: 100,
+    height: 100,
   } as ViewStyle,
   imagePreview: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
+    borderRadius: 10,
     backgroundColor: Colors.tertiaryBackground,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  } as ViewStyle,
+  } as ImageStyle,
   removeImageButton: {
     position: 'absolute',
     top: -8,
