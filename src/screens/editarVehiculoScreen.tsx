@@ -183,7 +183,6 @@ const EditarVehiculoScreen: React.FC<EditarVehiculoScreenProps> = ({ navigation,
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.form}>
-          <Text style={styles.formTitle}>Editar vehículo</Text>
 
           <Text style={styles.label}>Marca y modelo *</Text>
           <Input

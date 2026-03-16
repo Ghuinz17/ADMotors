@@ -85,15 +85,15 @@ export const SupabaseVehiculoService = {
    */
   async createVehiculo(formData: VehiculoFormData): Promise<string> {
     try {
-      const vehiculoId = `v-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      //const vehiculoId = `v-${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
-      console.log(`Creando vehículo: ${vehiculoId}`);
-
+      //console.log(`Creando vehículo: ${vehiculoId}`);
+      console.log(`Creando vehículo...`);
       const { data, error } = await supabase
         .from('vehiculo')
         .insert([
           {
-            id_vehiculo: vehiculoId,
+           // id_vehiculo: vehiculoId,
             marca_modelo: formData.marca_modelo,
             descripcion: formData.descripcion || null,
             precio: parseFloat(formData.precio),
@@ -107,8 +107,11 @@ export const SupabaseVehiculoService = {
         ])
         .select();
 
+        
       if (error) throw error;
-
+      
+      const vehiculoId = data[0].id_vehiculo;
+      
       console.log(`Vehículo creado: ${vehiculoId}`);
 
       if (formData.imagenes && formData.imagenes.length > 0) {
@@ -163,7 +166,7 @@ export const SupabaseVehiculoService = {
    */
   async subirImagenesBase64(vehiculoId: string, imagenes: string[]): Promise<void> {
     try {
-      console.log(`⬆️ Subiendo ${imagenes.length} imagen(es)...`);
+      console.log(` Subiendo ${imagenes.length} imagen(es)...`);
 
       let subidosExitosos = 0;
       let errores = 0;
@@ -175,7 +178,7 @@ export const SupabaseVehiculoService = {
           console.log(`Procesando imagen ${i + 1}/${imagenes.length}...`);
 
           if (base64Data.startsWith('http')) {
-            console.log('⏭️ URL detectada, saltando...');
+            console.log('URL detectada, saltando...');
             continue;
           }
 
@@ -215,7 +218,7 @@ export const SupabaseVehiculoService = {
           console.log('Imagen registrada en base de datos');
           subidosExitosos++;
         } catch (itemError) {
-          console.error(`❌ Error procesando imagen ${i}:`, itemError);
+          console.error(`Error procesando imagen ${i}:`, itemError);
           errores++;
         }
       }
