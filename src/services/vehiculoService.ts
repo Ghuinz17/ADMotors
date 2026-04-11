@@ -1,9 +1,9 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { v4 as uuidv4 } from 'uuid';
-import { Vehiculo, VehiculoFormData } from '../types';
-import { AppStorage } from '../utils/storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { v4 as uuidv4 } from "uuid";
+import { Vehiculo, VehiculoFormData } from "../types";
+import { AppStorage } from "../utils/storage";
 
-const VEHICULOS_KEY = '@AD_MOTORS_VEHICULOS';
+const VEHICULOS_KEY = "@AD_MOTORS_VEHICULOS";
 
 /**
  * VehiculoService - Servicio de caché local
@@ -17,18 +17,18 @@ export const VehiculoService = {
   async getVehiculos(): Promise<Vehiculo[]> {
     try {
       const data = await AsyncStorage.getItem(VEHICULOS_KEY);
-      
+
       if (!data) {
-        console.log('📭 No hay vehículos en caché local');
+        console.log("No hay vehículos en caché local");
         return [];
       }
 
       const vehiculos = JSON.parse(data);
       console.log(`Vehículos obtenidos del caché: ${vehiculos.length}`);
-      
+
       return vehiculos;
     } catch (error) {
-      console.error('Error al obtener vehículos:', error);
+      console.error("Error al obtener vehículos:", error);
       return [];
     }
   },
@@ -40,7 +40,7 @@ export const VehiculoService = {
     try {
       const vehiculos = await this.getVehiculos();
       const vehiculo = vehiculos.find((v) => v.id_vehiculo === id);
-      
+
       if (!vehiculo) {
         console.warn(`Vehículo ${id} no encontrado en caché`);
         return null;
@@ -48,7 +48,7 @@ export const VehiculoService = {
 
       return vehiculo;
     } catch (error) {
-      console.error('Error al obtener vehículo:', error);
+      console.error("Error al obtener vehículo:", error);
       return null;
     }
   },
@@ -59,13 +59,15 @@ export const VehiculoService = {
   async saveVehiculo(vehiculo: Vehiculo): Promise<Vehiculo> {
     try {
       const vehiculos = await this.getVehiculos();
-      
+
       // Si no tiene ID, generar uno
       if (!vehiculo.id_vehiculo) {
         vehiculo.id_vehiculo = uuidv4();
       }
 
-      const index = vehiculos.findIndex((v) => v.id_vehiculo === vehiculo.id_vehiculo);
+      const index = vehiculos.findIndex(
+        (v) => v.id_vehiculo === vehiculo.id_vehiculo,
+      );
 
       if (index >= 0) {
         vehiculos[index] = vehiculo;
@@ -77,10 +79,10 @@ export const VehiculoService = {
 
       await AsyncStorage.setItem(VEHICULOS_KEY, JSON.stringify(vehiculos));
       await AppStorage.setVehiculosCache(vehiculos);
-      
+
       return vehiculo;
     } catch (error) {
-      console.error('Error al guardar vehículo:', error);
+      console.error("Error al guardar vehículo:", error);
       throw error;
     }
   },
@@ -95,12 +97,15 @@ export const VehiculoService = {
   /**
    * Actualizar vehículo
    */
-  async updateVehiculo(id: string, vehiculo: Vehiculo): Promise<Vehiculo | null> {
+  async updateVehiculo(
+    id: string,
+    vehiculo: Vehiculo,
+  ): Promise<Vehiculo | null> {
     try {
       vehiculo.id_vehiculo = id;
       return await this.saveVehiculo(vehiculo);
     } catch (error) {
-      console.error('Error al actualizar vehículo:', error);
+      console.error("Error al actualizar vehículo:", error);
       return null;
     }
   },
@@ -113,12 +118,15 @@ export const VehiculoService = {
       const vehiculos = await this.getVehiculos();
       const filteredVehiculos = vehiculos.filter((v) => v.id_vehiculo !== id);
 
-      await AsyncStorage.setItem(VEHICULOS_KEY, JSON.stringify(filteredVehiculos));
+      await AsyncStorage.setItem(
+        VEHICULOS_KEY,
+        JSON.stringify(filteredVehiculos),
+      );
       console.log(`Vehículo eliminado del caché: ${id}`);
-      
+
       return true;
     } catch (error) {
-      console.error('Error al eliminar vehículo:', error);
+      console.error("Error al eliminar vehículo:", error);
       return false;
     }
   },
@@ -137,7 +145,9 @@ export const VehiculoService = {
 
       if (criterios.marca) {
         vehiculos = vehiculos.filter((v) =>
-          v.marca_modelo.toLowerCase().includes(criterios.marca!.toLowerCase())
+          `${v.marca} ${v.modelo}`
+            .toLowerCase()
+            .includes(criterios.marca!.toLowerCase()),
         );
       }
 
@@ -151,14 +161,14 @@ export const VehiculoService = {
 
       if (criterios.combustible) {
         vehiculos = vehiculos.filter(
-          (v) => v.tipo_combustible === criterios.combustible
+          (v) => v.tipo_combustible === criterios.combustible,
         );
       }
 
       console.log(`${vehiculos.length} vehículos encontrados`);
       return vehiculos;
     } catch (error) {
-      console.error('Error al filtrar vehículos:', error);
+      console.error("Error al filtrar vehículos:", error);
       return [];
     }
   },
@@ -166,31 +176,33 @@ export const VehiculoService = {
   /**
    * Ordenar vehículos
    */
-  async sortVehiculos(sortBy: 'precio' | 'fecha' | 'marca'): Promise<Vehiculo[]> {
+  async sortVehiculos(
+    sortBy: "precio" | "fecha" | "marca",
+  ): Promise<Vehiculo[]> {
     try {
       const vehiculos = await this.getVehiculos();
 
       switch (sortBy) {
-        case 'precio':
+        case "precio":
           vehiculos.sort((a, b) => a.precio - b.precio);
           break;
-        case 'fecha':
+        case "fecha":
           vehiculos.sort((a, b) => {
-            const fechaA = new Date(a.fecha_creacion || '').getTime();
-            const fechaB = new Date(b.fecha_creacion || '').getTime();
+            const fechaA = new Date(a.fecha_creacion || "").getTime();
+            const fechaB = new Date(b.fecha_creacion || "").getTime();
             return fechaB - fechaA;
           });
           break;
-        case 'marca':
+        case "marca":
           vehiculos.sort((a, b) =>
-            a.marca_modelo.localeCompare(b.marca_modelo)
+            `${a.marca} ${a.modelo}`.localeCompare(`${b.marca} ${b.modelo}`),
           );
           break;
       }
 
       return vehiculos;
     } catch (error) {
-      console.error('Error al ordenar vehículos:', error);
+      console.error("Error al ordenar vehículos:", error);
       return [];
     }
   },
@@ -219,13 +231,14 @@ export const VehiculoService = {
       }
 
       const precios = vehiculos.map((v) => v.precio);
-      const precioPromedio = precios.reduce((a, b) => a + b, 0) / precios.length;
+      const precioPromedio =
+        precios.reduce((a, b) => a + b, 0) / precios.length;
       const precioMin = Math.min(...precios);
       const precioMax = Math.max(...precios);
 
       const porMarca: Record<string, number> = {};
       vehiculos.forEach((v) => {
-        const marca = v.marca_modelo.split(' ')[0];
+        const marca = `${v.marca} ${v.modelo}`.split(" ")[0];
         porMarca[marca] = (porMarca[marca] || 0) + 1;
       });
 
@@ -237,7 +250,7 @@ export const VehiculoService = {
         porMarca,
       };
     } catch (error) {
-      console.error('Error al obtener estadísticas:', error);
+      console.error("Error al obtener estadísticas:", error);
       return {
         total: 0,
         precioPromedio: 0,
@@ -260,7 +273,7 @@ export const VehiculoService = {
 
       vehiculosRemote.forEach((remoto) => {
         const existe = combinados.findIndex(
-          (v) => v.id_vehiculo === remoto.id_vehiculo
+          (v) => v.id_vehiculo === remoto.id_vehiculo,
         );
 
         if (existe >= 0) {
@@ -272,10 +285,10 @@ export const VehiculoService = {
 
       await AsyncStorage.setItem(VEHICULOS_KEY, JSON.stringify(combinados));
       await AppStorage.setLastSyncTime(new Date().toISOString());
-      
+
       console.log(`Sincronización completada: ${combinados.length} vehículos`);
     } catch (error) {
-      console.error('Error al sincronizar:', error);
+      console.error("Error al sincronizar:", error);
     }
   },
 
@@ -285,9 +298,9 @@ export const VehiculoService = {
   async clearAll(): Promise<void> {
     try {
       await AsyncStorage.removeItem(VEHICULOS_KEY);
-      console.log('Caché de vehículos limpiado');
+      console.log("Caché de vehículos limpiado");
     } catch (error) {
-      console.error('Error al limpiar caché:', error);
+      console.error("Error al limpiar caché:", error);
     }
   },
 

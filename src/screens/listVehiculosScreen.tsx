@@ -79,7 +79,9 @@ const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({
         <View style={styles.cardTitleContainer}>
           <Ionicons name="car-sport" size={24} color={Colors.primary} />
           <View style={styles.titleContainer}>
-            <Text style={styles.vehiculoMarca}>{item.marca_modelo}</Text>
+            <Text
+              style={styles.vehiculoMarca}
+            >{`${item.marca} ${item.modelo}`}</Text>
             <Text style={styles.vehiculoAno}>{item.ano_fabricacion}</Text>
           </View>
         </View>
