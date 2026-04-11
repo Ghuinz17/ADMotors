@@ -164,7 +164,7 @@ const AnadirVehiculoScreen: React.FC<Props> = ({ navigation }) => {
             icon="car-sport"
           />
 
-          <Text style={styles.label}>Descripción</Text>
+          <Text style={styles.label}>Descripción *</Text>
           <Input
             placeholder="Descripción del vehículo..."
             value={formData.descripcion}
@@ -201,7 +201,7 @@ const AnadirVehiculoScreen: React.FC<Props> = ({ navigation }) => {
             icon="speedometer"
           />
 
-          <Text style={styles.label}>Color</Text>
+          <Text style={styles.label}>Color *</Text>
           <Input
             placeholder="Ej: Rojo, Azul..."
             value={formData.color}

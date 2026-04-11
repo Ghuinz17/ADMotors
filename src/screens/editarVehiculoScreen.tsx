@@ -207,7 +207,7 @@ const EditarVehiculoScreen: React.FC<Props> = ({ navigation, route }) => {
             icon="car-sport"
           />
 
-          <Text style={styles.label}>Descripción</Text>
+          <Text style={styles.label}>Descripción *</Text>
           <Input
             placeholder="Descripción del vehículo..."
             value={formData.descripcion}
@@ -244,7 +244,7 @@ const EditarVehiculoScreen: React.FC<Props> = ({ navigation, route }) => {
             icon="speedometer"
           />
 
-          <Text style={styles.label}>Color</Text>
+          <Text style={styles.label}>Color *</Text>
           <Input
             placeholder="Ej: Rojo, Azul..."
             value={formData.color}
