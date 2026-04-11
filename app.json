@@ -41,9 +41,15 @@
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.READ_MEDIA_IMAGES"
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.RECORD_AUDIO"
       ]
     },
-    "description": "Gestión de vehículos con imágenes en la nube - Android"
+    "description": "Gestión de vehículos con imágenes en la nube - Android",
+    "extra": {
+      "eas": {
+        "projectId": "acd2eaae-a280-43b5-a1b8-72bc8b09ee99"
+      }
+    }
   }
 }
