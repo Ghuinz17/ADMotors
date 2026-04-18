@@ -1,3 +1,5 @@
+// Tipos de datos base de datos
+
 export enum CombustibleType {
   GASOLINA  = 'GASOLINA',
   DIESEL    = 'DIESEL',
@@ -31,6 +33,7 @@ export interface Vehiculo {
   kilometraje:       number;
   color?:            string;
   reservado?:        boolean;
+  fecha_reserva?:    string;
   fecha_creacion:    string;
   fecha_actualizacion?: string;
 }

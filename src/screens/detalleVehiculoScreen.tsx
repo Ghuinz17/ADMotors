@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,19 +12,19 @@ import {
   ViewStyle,
   TextStyle,
   ImageStyle,
-} from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList, Vehiculo } from "../types";
-import { Colors } from "../constants/colors";
-import { spacing } from "../styles/global";
-import Header from "../components/header";
-import { SupabaseVehiculoService } from "../services";
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList, Vehiculo } from '../types';
+import { Colors } from '../constants/colors';
+import { spacing } from '../styles/global';
+import Header from '../components/header';
+import { SupabaseVehiculoService } from '../services';
 
 type DetalleVehiculoScreenProps = NativeStackScreenProps<
   RootStackParamList,
-  "DetalleVehiculo"
+  'DetalleVehiculo'
 >;
 
 const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
@@ -38,6 +38,7 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
   const [imagenes, setImagenes] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [publishing, setPublishing] = useState(false);
 
   useEffect(() => {
     cargarVehiculo();
@@ -46,24 +47,23 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
   const cargarVehiculo = async () => {
     try {
       setLoading(true);
-      console.log("Cargando detalle de vehiculo:", vehiculoId);
+      console.log('Cargando detalle de vehiculo:', vehiculoId);
 
       const data = await SupabaseVehiculoService.getVehiculoById(vehiculoId);
       if (data) {
         setVehiculo(data);
 
-        const imgs =
-          await SupabaseVehiculoService.getImagenesVehiculo(vehiculoId);
+        const imgs = await SupabaseVehiculoService.getImagenesVehiculo(vehiculoId);
         setImagenes(imgs);
 
         console.log(`Vehiculo cargado con ${imgs.length} imagenes`);
       } else {
-        Alert.alert("Error", "Vehiculo no encontrado");
+        Alert.alert('Error', 'Vehiculo no encontrado');
         navigation.goBack();
       }
     } catch (error) {
-      console.error("Error al cargar vehiculo:", error);
-      Alert.alert("Error", "No se pudo cargar el vehiculo");
+      console.error('Error al cargar vehiculo:', error);
+      Alert.alert('Error', 'No se pudo cargar el vehiculo');
       navigation.goBack();
     } finally {
       setLoading(false);
@@ -71,43 +71,72 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
   };
 
   const handleEditar = () => {
-    navigation.navigate("EditarVehiculo", { vehiculoId });
+    navigation.navigate('EditarVehiculo', { vehiculoId });
+  };
+
+  const handleRepublicar = () => {
+    Alert.alert(
+      'Volver a publicar',
+      `¿Deseas volver a publicar "${vehiculo?.marca} ${vehiculo?.modelo}"? Se mostrará de nuevo en el catálogo.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Publicar', onPress: republicarVehiculo },
+      ]
+    );
+  };
+
+  const republicarVehiculo = async () => {
+    setPublishing(true);
+    try {
+      const { supabase } = await import('../config/supabase');
+      const { error } = await supabase
+        .from('vehiculo')
+        .update({ reservado: false, fecha_reserva: null })
+        .eq('id_vehiculo', vehiculoId);
+      if (error) throw error;
+      setVehiculo(prev => prev ? { ...prev, reservado: false } : prev);
+      Alert.alert('Publicado', 'El vehículo vuelve a estar disponible en el catálogo.');
+    } catch {
+      Alert.alert('Error', 'No se pudo republicar el vehículo.');
+    } finally {
+      setPublishing(false);
+    }
   };
 
   const handleEliminar = () => {
     Alert.alert(
-      "Eliminar vehiculo",
-      "Estas seguro de que deseas eliminar este vehiculo?",
+      'Eliminar vehículo',
+      '¿Estás seguro de que deseas eliminar este vehículo?',
       [
         {
-          text: "Cancelar",
-          onPress: () => {},
-          style: "cancel",
+          text: 'Cancelar',
+          onPress: () => { },
+          style: 'cancel',
         },
         {
-          text: "Eliminar",
+          text: 'Eliminar',
           onPress: eliminarVehiculo,
-          style: "destructive",
+          style: 'destructive',
         },
-      ],
+      ]
     );
   };
 
   const eliminarVehiculo = async () => {
     setDeleting(true);
     try {
-      console.log("Eliminando vehiculo...");
+      console.log('Eliminando vehiculo...');
       await SupabaseVehiculoService.deleteVehiculo(vehiculoId);
 
-      Alert.alert("Exito", "Vehiculo eliminado correctamente", [
+      Alert.alert('Exito', 'Vehiculo eliminado correctamente', [
         {
-          text: "OK",
-          onPress: () => navigation.navigate("ListVehiculos"),
+          text: 'OK',
+          onPress: () => navigation.navigate('ListVehiculos'),
         },
       ]);
     } catch (error) {
-      Alert.alert("Error", "No se pudo eliminar el vehiculo");
-      console.error("Error:", error);
+      Alert.alert('Error', 'No se pudo eliminar el vehiculo');
+      console.error('Error:', error);
     } finally {
       setDeleting(false);
     }
@@ -170,10 +199,7 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
         },
       ]}
     >
-      <Header
-        title="Detalle del vehiculo"
-        onBackPress={() => navigation.goBack()}
-      />
+      <Header title="Detalle del vehiculo" onBackPress={() => navigation.goBack()} />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -192,19 +218,13 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
           </View>
         ) : (
           <View style={styles.imageContainer}>
-            <Ionicons
-              name="image-outline"
-              size={48}
-              color={Colors.textTertiary}
-            />
+            <Ionicons name="image-outline" size={48} color={Colors.textTertiary} />
             <Text style={styles.noImageText}>Sin imagenes</Text>
           </View>
         )}
 
         <View style={styles.mainInfoSection}>
-          <Text
-            style={styles.marca}
-          >{`${vehiculo.marca} ${vehiculo.modelo}`}</Text>
+          <Text style={styles.marca}>{`${vehiculo.marca} ${vehiculo.modelo}`}</Text>
           <Text style={styles.combustible}>{vehiculo.tipo_combustible}</Text>
         </View>
 
@@ -267,7 +287,7 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
               <Text style={styles.dateValue}>
                 {vehiculo.fecha_creacion
                   ? new Date(vehiculo.fecha_creacion).toLocaleDateString()
-                  : "No disponible"}
+                  : 'No disponible'}
               </Text>
             </View>
           </View>
@@ -285,20 +305,45 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
           )}
         </View>
 
+        {/* Badge reservado */}
+        {vehiculo.reservado && (
+          <View style={styles.reservadoBadge}>
+            <Ionicons name="lock-closed" size={14} color="#fff" />
+            <Text style={styles.reservadoText}>RESERVADO</Text>
+          </View>
+        )}
+
         <View style={styles.actionsContainer}>
           <TouchableOpacity
             style={[styles.actionButton, styles.editButton]}
             onPress={handleEditar}
-            disabled={deleting}
+            disabled={deleting || publishing}
           >
             <Ionicons name="pencil" size={18} color={Colors.textPrimary} />
             <Text style={styles.actionButtonText}>Editar</Text>
           </TouchableOpacity>
 
+          {vehiculo.reservado ? (
+            <TouchableOpacity
+              style={[styles.actionButton, styles.publishButton]}
+              onPress={handleRepublicar}
+              disabled={publishing || deleting}
+            >
+              {publishing ? (
+                <ActivityIndicator color={Colors.textPrimary} size="small" />
+              ) : (
+                <>
+                  <Ionicons name="eye" size={18} color={Colors.textPrimary} />
+                  <Text style={styles.actionButtonText}>Republicar</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          ) : null}
+
           <TouchableOpacity
             style={[styles.actionButton, styles.deleteButton]}
             onPress={handleEliminar}
-            disabled={deleting}
+            disabled={deleting || publishing}
           >
             {deleting ? (
               <ActivityIndicator color={Colors.textPrimary} size="small" />
@@ -351,8 +396,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryBackground,
   } as ViewStyle,
   centerContainer: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   } as ViewStyle,
   scrollContent: {
     paddingHorizontal: spacing.lg,
@@ -367,16 +412,16 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
   } as ViewStyle,
   galeriaRow: {
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
     marginBottom: spacing.md,
   } as ViewStyle,
   imagenItem: {
-    width: "48%",
+    width: '48%',
     aspectRatio: 1,
   } as ViewStyle,
   imagenGaleria: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: 12,
     backgroundColor: Colors.tertiaryBackground,
   } as ImageStyle,
@@ -384,8 +429,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.tertiaryBackground,
     borderRadius: 12,
     paddingVertical: spacing.xxl,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.lg,
   } as ViewStyle,
   noImageText: {
@@ -398,42 +443,42 @@ const styles = StyleSheet.create({
   } as ViewStyle,
   marca: {
     fontSize: 24,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.textPrimary,
     marginBottom: spacing.sm,
   } as TextStyle,
   combustible: {
     fontSize: 12,
     color: Colors.textSecondary,
-    fontWeight: "600",
+    fontWeight: '600',
   } as TextStyle,
   infoCard: {
     backgroundColor: Colors.secondaryBackground,
     borderRadius: 16,
-    overflow: "hidden",
+    overflow: 'hidden',
     marginBottom: spacing.lg,
   } as ViewStyle,
   infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.lg,
   } as ViewStyle,
   infoLabel: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.md,
   } as ViewStyle,
   label: {
     fontSize: 13,
     color: Colors.textSecondary,
-    fontWeight: "500",
+    fontWeight: '500',
   } as TextStyle,
   value: {
     fontSize: 14,
     color: Colors.textPrimary,
-    fontWeight: "600",
+    fontWeight: '600',
   } as TextStyle,
   highlightValue: {
     color: Colors.primary,
@@ -451,14 +496,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   } as ViewStyle,
   sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.md,
     marginBottom: spacing.md,
   } as ViewStyle,
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
   } as TextStyle,
   descriptionText: {
@@ -474,31 +519,31 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   } as ViewStyle,
   dateItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.md,
   } as ViewStyle,
   dateLabel: {
     fontSize: 12,
     color: Colors.textSecondary,
-    fontWeight: "500",
+    fontWeight: '500',
   } as TextStyle,
   dateValue: {
     fontSize: 13,
     color: Colors.textPrimary,
-    fontWeight: "600",
+    fontWeight: '600',
     marginTop: 2,
   } as TextStyle,
   actionsContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: spacing.lg,
     marginBottom: spacing.xxl,
   } as ViewStyle,
   actionButton: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: spacing.sm,
     paddingVertical: spacing.lg,
     borderRadius: 12,
@@ -506,13 +551,33 @@ const styles = StyleSheet.create({
   editButton: {
     backgroundColor: Colors.primary,
   } as ViewStyle,
+  publishButton: {
+    backgroundColor: '#16a34a',
+  } as ViewStyle,
   deleteButton: {
     backgroundColor: Colors.danger,
   } as ViewStyle,
   actionButtonText: {
     color: Colors.textPrimary,
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: 14,
+  } as TextStyle,
+  reservadoBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: '#dc2626',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: 8,
+    marginBottom: spacing.lg,
+    alignSelf: 'flex-start',
+  } as ViewStyle,
+  reservadoText: {
+    color: '#fff',
+    fontWeight: '800',
+    fontSize: 12,
+    letterSpacing: 1,
   } as TextStyle,
   loadingText: {
     marginTop: spacing.lg,
