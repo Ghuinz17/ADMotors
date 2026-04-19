@@ -19,48 +19,60 @@ type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const insets = useSafeAreaInsets();
 
+  const menuItems = [
+    {
+      label:  'Lista de vehículos',
+      icon:   'list',
+      color:  Colors.primary,
+      onPress: () => navigation.navigate('ListVehiculos'),
+    },
+    {
+      label:  'Añadir vehículo',
+      icon:   'add-circle',
+      color:  '#16a34a',
+      onPress: () => navigation.navigate('AnadirVehiculo'),
+    },
+    {
+      label:  'Solicitudes de visita',
+      icon:   'calendar',
+      color:  '#f59e0b',
+      onPress: () => navigation.navigate('Solicitudes'),
+    },
+  ];
+
   return (
     <View
       style={[
         styles.container,
         {
-          paddingTop: insets.top,
+          paddingTop:    insets.top,
           paddingBottom: insets.bottom,
-          paddingLeft: insets.left,
-          paddingRight: insets.right,
+          paddingLeft:   insets.left,
+          paddingRight:  insets.right,
         },
       ]}
     >
       <View style={styles.headerContainer}>
         <Text style={styles.title}>AD Motors</Text>
         <View style={styles.underline} />
-        <Text style={styles.subtitle}>AD MOTORS</Text>
+        <Text style={styles.subtitle}>PANEL DE ADMINISTRACIÓN</Text>
       </View>
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('ListVehiculos')}
-          activeOpacity={0.8}
-        >
-          <View style={styles.iconContainer}>
-            <Ionicons name="list" size={24} color={Colors.textPrimary} />
-          </View>
-          <Text style={styles.buttonText}>Lista Vehiculo</Text>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textTertiary} />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('AnadirVehiculo')}
-          activeOpacity={0.8}
-        >
-          <View style={styles.iconContainer}>
-            <Ionicons name="add-circle" size={24} color={Colors.textPrimary} />
-          </View>
-          <Text style={styles.buttonText}>Anadir Vehiculo</Text>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textTertiary} />
-        </TouchableOpacity>
+        {menuItems.map((item, i) => (
+          <TouchableOpacity
+            key={i}
+            style={styles.button}
+            onPress={item.onPress}
+            activeOpacity={0.8}
+          >
+            <View style={[styles.iconContainer, { backgroundColor: item.color }]}>
+              <Ionicons name={item.icon as any} size={22} color="#fff" />
+            </View>
+            <Text style={styles.buttonText}>{item.label}</Text>
+            <Ionicons name="chevron-forward" size={20} color={Colors.textTertiary} />
+          </TouchableOpacity>
+        ))}
       </View>
 
       <View style={{ flex: 1 }} />
@@ -90,9 +102,9 @@ const styles = StyleSheet.create({
     marginVertical: spacing.lg,
   } as ViewStyle,
   subtitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Colors.textPrimary,
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.textSecondary,
     letterSpacing: 3,
   } as TextStyle,
   buttonsContainer: {
@@ -112,10 +124,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   } as ViewStyle,
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: Colors.primary,
+    width: 42,
+    height: 42,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
   } as ViewStyle,
