@@ -16,7 +16,7 @@ import { supabase } from '../config/supabase';
 type Props = NativeStackScreenProps<RootStackParamList, 'Solicitudes'>;
 
 interface Solicitud {
-  id_solicitud:     string;
+  id:     string;
   id_vehiculo:      string;
   nombre_asistente: string;
   telefono:         string;
@@ -89,14 +89,14 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
             const { error } = await supabase
               .from('solicitudes_revision')
               .update({ estado: nuevoEstado })
-              .eq('id_solicitud', id);
+              .eq('id', id);
             if (error) {
               console.error('Update error:', JSON.stringify(error));
               Alert.alert('Error', error.message);
               return;
             }
             setSolicitudes(prev =>
-              prev.map(s => s.id_solicitud === id ? { ...s, estado: nuevoEstado } : s)
+              prev.map(s => s.id === id ? { ...s, estado: nuevoEstado } : s)
             );
           } catch(e: any) {
             Alert.alert('Error', e?.message || 'Error desconocido');
@@ -163,7 +163,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
 
   const renderSolicitud = ({ item: s }: { item: Solicitud }) => {
     const estadoStyle = getEstadoStyle(s.estado);
-    const isUpdating  = updating === s.id_solicitud;
+    const isUpdating  = updating === s.id;
     const isPendiente = s.estado === 'PENDIENTE';
 
     return (
@@ -216,7 +216,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
           {isPendiente && (
             <TouchableOpacity
               style={[styles.accionBtn, styles.btnAceptar]}
-              onPress={() => cambiarEstado(s.id_solicitud, 'CONFIRMADA')}
+              onPress={() => cambiarEstado(s.id, 'CONFIRMADA')}
               disabled={isUpdating}
             >
               {isUpdating ? (
@@ -234,7 +234,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
           {isPendiente && (
             <TouchableOpacity
               style={[styles.accionBtn, styles.btnRechazar]}
-              onPress={() => cambiarEstado(s.id_solicitud, 'CANCELADA')}
+              onPress={() => cambiarEstado(s.id, 'CANCELADA')}
               disabled={isUpdating}
             >
               {isUpdating ? (
@@ -287,7 +287,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
 
       <FlatList
         data={filtradas}
-        keyExtractor={item => item.id_solicitud}
+        keyExtractor={item => item.id}
         renderItem={renderSolicitud}
         contentContainerStyle={styles.list}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />}
