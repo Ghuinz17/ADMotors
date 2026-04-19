@@ -88,4 +88,5 @@ export type RootStackParamList = {
   AnadirVehiculo:  undefined;
   EditarVehiculo:  { vehiculoId: string };
   DetalleVehiculo: { vehiculoId: string };
+  Solicitudes:     undefined;
 };
