@@ -1,3 +1,4 @@
+// App.tsx
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -7,12 +8,12 @@ import { StatusBar } from 'expo-status-bar';
 
 import { RootStackParamList } from './src/types';
 
-import HomeScreen           from './src/screens/HomeScreen';
-import ListVehiculosScreen  from './src/screens/ListVehiculosScreen';
-import AnadirVehiculoScreen from './src/screens/AnadirVehiculoScreen';
-import EditarVehiculoScreen from './src/screens/EditarVehiculoScreen';
-import DetalleVehiculoScreen from './src/screens/DetalleVehiculoScreen';
-import SolicitudesScreen    from './src/screens/SolicitudesScreen';
+import HomeScreen            from './src/screens/homeScreen';
+import ListVehiculosScreen   from './src/screens/listVehiculosScreen';
+import AnadirVehiculoScreen  from './src/screens/anadirVehiculoScreen';
+import EditarVehiculoScreen  from './src/screens/editarVehiculoScreen';
+import DetalleVehiculoScreen from './src/screens/detalleVehiculoScreen';
+import SolicitudesScreen     from './src/screens/solicitudesscreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
