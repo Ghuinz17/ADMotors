@@ -40,7 +40,8 @@
 
 ### **Campos de Vehículo**
 
-- 📝 Marca y modelo
+- 📝 Marca
+- 📋 Modelo
 - 💰 Precio
 - 📅 Año de fabricación
 - ⛽ Tipo de combustible
