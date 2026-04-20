@@ -1,6 +1,6 @@
-# 🏎️ AD Motor´s App
+# 📱 AD Motor's — App de Administración
 
-**Aplicación móvil para gestionar vehículos con imágenes, desarrollada con React Native y Supabase.**
+**Aplicación móvil Android para gestionar el catálogo de vehículos y las solicitudes de clientes, desarrollada con React Native y Expo.**
 
 [![Node.js](https://img.shields.io/badge/Node.js-v24.13.1-green)](https://nodejs.org/)
 [![React Native](https://img.shields.io/badge/React%20Native-0.74.5-blue)](https://reactnative.dev/)
@@ -11,143 +11,115 @@
 
 ---
 
-## 📱 Descripción
+## 📋 Descripción
 
-**AD Motors** es una aplicación móvil completa para **crear, editar, visualizar y eliminar vehículos** con sus correspondientes imágenes. La aplicación está optimizada para **iOS y Android** y utiliza **Supabase** como backend para almacenar datos e imágenes.
-
-**Características principales:**
-- ✅ Gestión CRUD completa de vehículos
-- ✅ Carga de múltiples imágenes por vehículo
-- ✅ Almacenamiento en la nube (Supabase Storage)
-- ✅ Sincronización en tiempo real
-- ✅ Autenticación anónima
-- ✅ Interfaz intuitiva y responsive
-- ✅ Compatible con iOS y Android
+**AD Motor's App** es la herramienta de administración del concesionario. Permite al personal gestionar el catálogo de vehículos completo, revisar y gestionar las solicitudes de visita de los clientes, y controlar el estado de las reservas, todo desde el móvil.
 
 ---
 
-## 🎯 Características
+## ✅ Características principales
 
-### **Funcionalidades Principales**
-
-| Función | Descripción |
-|---------|------------|
-| **Agregar Vehículo** | Crear nuevo vehículo con datos y múltiples imágenes |
-| **Listar Vehículos** | Ver todos los vehículos registrados en el dispositivo |
-| **Ver Detalles** | Visualizar información completa y galería de imágenes |
-| **Editar Vehículo** | Modificar datos y agregar nuevas imágenes |
-| **Eliminar Vehículo** | Remover vehículo e imágenes asociadas |
-
-### **Campos de Vehículo**
-
-- 📝 Marca
-- 📋 Modelo
-- 💰 Precio
-- 📅 Año de fabricación
-- ⛽ Tipo de combustible
-- 🛣️ Kilometraje
-- 🎨 Color
-- 📸 Múltiples imágenes
-- 📄 Descripción
+- 🚗 Gestión completa de vehículos — crear, editar, ver y eliminar
+- 📸 Carga de múltiples imágenes por vehículo (galería y cámara)
+- 📅 Gestión de solicitudes de visita — aceptar, rechazar o contactar al cliente
+- 📞 Contacto directo con el cliente por llamada o WhatsApp
+- 🔒 Control de reservas — republicar vehículos cuando una reserva no se completa
+- 🏷️ Visualización del estado de cada vehículo (disponible / reservado)
+- 🔄 Actualización en tiempo real mediante pull-to-refresh
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Tecnologías utilizadas
 
-### **Framework y Plataforma**
+### Framework y plataforma
 - React Native 0.74.5
 - Expo 51.0.39
 - TypeScript 5.3.3
 
-### **Navegación**
+### Navegación
 - @react-navigation/native
 - @react-navigation/native-stack
-- @react-navigation/stack
 
-### **Backend y Base de Datos**
+### Backend y base de datos
 - Supabase 2.45.1
 - PostgreSQL (a través de Supabase)
 
-### **Almacenamiento**
-- Supabase Storage (imágenes en la nube)
-- @react-native-async-storage/async-storage (almacenamiento local)
-
-### **Procesamiento de Imágenes**
+### Imágenes y multimedia
 - expo-image-picker 15.1.0
-- expo-image-manipulator 12.0.5
+- base64-arraybuffer 1.0.2
 
-### **Utilidades**
+### Utilidades
 - @expo/vector-icons 14.0.3 (Ionicons)
 - react-native-safe-area-context 4.10.5
 - react-native-screens 3.31.1
-- react-native-gesture-handler 2.16.1
 - expo-status-bar 1.12.1
-- expo-font 12.0.10
-- expo-system-ui 3.0.7
-- base64-arraybuffer 1.0.2
-- uuid (para generar IDs únicos)
 
 ---
 
-## 📋 Requisitos Previos
+## 📋 Requisitos previos
 
 Antes de instalar, asegúrate de tener:
 
 - **Node.js** versión 24.13.1 o superior
 - **npm** o **yarn**
 - **Expo CLI** instalado globalmente
-- **Cuenta de Supabase** (gratuita en [supabase.com](https://supabase.com))
+- **Cuenta de Supabase** gratuita en [supabase.com](https://supabase.com)
 - **Git** para clonar el repositorio
 
 ---
 
+## 🚀 Instalación
+
+```bash
+# 1. Clona el repositorio
+git clone https://github.com/Ghuinz17/ad-motors-app.git
+cd ad-motors-app
+
+# 2. Instala las dependencias
+npm install --legacy-peer-deps
+
+# 3. Configura las credenciales de Supabase
+# Edita src/config/supabase.ts con tu URL y clave anónima
+
+# 4. Inicia la app en modo desarrollo
+npx expo start
+```
+
+---
+
+## 📦 Build para Android
+
+```bash
+# Genera un APK de prueba
+eas build --platform android --profile preview
+
+# Genera un AAB para publicar en Play Store
+eas build --platform android --profile production
+```
+
+---
 
 ## 💻 Uso
 
-### **Pantalla Principal (Home)**
-- Acceso a opciones: Ver vehículos, Agregar vehículo
+### Pantalla principal
+Acceso directo a las tres secciones principales: lista de vehículos, añadir vehículo y solicitudes de visita.
 
-### **Listar Vehículos**
-- Muestra todos los vehículos del dispositivo
-- Toca un vehículo para ver detalles
-- Desliza para eliminar (swipe)
+### Gestión de vehículos
+1. Accede a **Lista de vehículos** para ver todos los registros
+2. Pulsa sobre un vehículo para ver sus detalles
+3. Usa los botones **Editar** o **Eliminar** según necesites
+4. Si el vehículo está reservado, aparece el botón **Republicar** para volver a hacerlo visible
 
-### **Agregar/Editar Vehículo**
-1. Ingresa los datos del vehículo
-2. Selecciona imágenes de la galería o cámara
-3. Presiona "Guardar"
+### Añadir o editar vehículo
+1. Rellena los datos del vehículo (marca, modelo, precio, año, combustible, kilometraje, color)
+2. Selecciona imágenes desde la galería o toma fotos con la cámara
+3. Pulsa **Guardar**
 
-### **Ver Detalles**
-- Visualiza información del vehículo
-- Galería de imágenes
-- Opciones para editar o eliminar
-
----
-
-## 🔐 Autenticación
-
-La aplicación utiliza **autenticación anónima de Supabase**, lo que significa:
-
-- ✅ No requiere login
-- ✅ Cada dispositivo tiene un Device ID único
-- ✅ Los datos se sincronizan automáticamente
-
----
-
-## 📁 Estructura del Proyecto
-
-El proyecto está organizado en la siguiente estructura:
-
-- **src/** - Código fuente de la aplicación
-  - **config/** - Configuración de servicios externos
-  - **types/** - Definiciones de tipos TypeScript
-  - **services/** - Servicios de negocio y comunicación con Supabase
-  - **screens/** - Pantallas de la aplicación
-  - **utils/** - Funciones utilitarias
-
-- **assets/** - Recursos (imágenes, íconos, splash screen)
-- **App.tsx** - Punto de entrada de la aplicación
-- **app.json** - Configuración de Expo
+### Gestión de solicitudes de visita
+1. Accede a **Solicitudes de visita** desde el menú principal
+2. Filtra por estado: Todos, Pendientes, Confirmadas o Canceladas
+3. Pulsa **Aceptar** o **Rechazar** para cambiar el estado
+4. Pulsa **Contactar** para llamar al cliente o enviarle un mensaje de WhatsApp con los datos de la visita
 
 ---
 
@@ -166,6 +138,10 @@ Este proyecto está bajo la Licencia MIT. Ver archivo `LICENSE` para más detall
 
 ---
 
-## 🙏 Colaboración con AD Motor´s
+## 🤝 Desarrollado para AD Motor's
 
-- AD Motor´s - (https://www.instagram.com/vehiculosadmotors)
+Este proyecto ha sido desarrollado en colaboración con **AD Motor's**.
+
+📸 **Instagram** — [vehiculosadmotors](https://www.instagram.com/vehiculosadmotors)  
+👥 **Facebook** — [AD Motors](https://www.facebook.com/people/AD-Motors/61584583105868/)  
+🎵 **TikTok** — Próximamente
