@@ -11,7 +11,7 @@ import ListVehiculosScreen from "./src/screens/listVehiculosScreen";
 import AnadirVehiculoScreen from "./src/screens/anadirVehiculoScreen";
 import EditarVehiculoScreen from "./src/screens/editarVehiculoScreen";
 import DetalleVehiculoScreen from "./src/screens/detalleVehiculoScreen";
-import SolicitudesScreen from "./src/screens/solicitudesscreen";
+import SolicitudesScreen from "./src/screens/solicitudesScreen";
 import CitaReservaScreen from "./src/screens/citaReservaScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
