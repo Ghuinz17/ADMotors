@@ -146,8 +146,6 @@ const AnadirVehiculoScreen: React.FC<Props> = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.form}>
-          <Text style={styles.formTitle}>Añadir nuevo vehículo</Text>
-
           <Text style={styles.label}>Marca *</Text>
           <Input
             placeholder="Ej: Toyota, BMW, Seat..."

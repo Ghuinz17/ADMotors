@@ -123,6 +123,30 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
                 s.id === id ? { ...s, estado: nuevoEstado } : s,
               ),
             );
+
+            // Al confirmar, ofrecer registrar cita
+            if (nuevoEstado === "CONFIRMADA") {
+              const sol = solicitudes.find((s) => s.id === id);
+              setTimeout(() => {
+                Alert.alert(
+                  "Solicitud confirmada",
+                  "¿Deseas registrar los datos de la cita con el cliente?",
+                  [
+                    { text: "Ahora no", style: "cancel" },
+                    {
+                      text: "Registrar cita",
+                      onPress: () =>
+                        navigation.navigate("CitaReserva", {
+                          vehiculoId: sol?.id_vehiculo || "",
+                          vehiculoNombre:
+                            `${sol?.marca || ""} ${sol?.modelo || sol?.marca_modelo || ""}`.trim() ||
+                            "Vehículo",
+                        }),
+                    },
+                  ],
+                );
+              }, 300);
+            }
           } catch (e: any) {
             Alert.alert("Error", e?.message || "Error desconocido");
           } finally {
@@ -141,11 +165,11 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
       [
         { text: "Cancelar", style: "cancel" },
         {
-          text: "📞 Llamar",
+          text: "Llamar",
           onPress: () => Linking.openURL(`tel:${tel}`),
         },
         {
-          text: "💬 WhatsApp",
+          text: "WhatsApp",
           onPress: () => {
             const waNum = tel.startsWith("+") ? tel.slice(1) : tel;
             const vehNombre =
