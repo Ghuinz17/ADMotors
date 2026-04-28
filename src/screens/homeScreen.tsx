@@ -38,6 +38,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       color:  '#f59e0b',
       onPress: () => navigation.navigate('Solicitudes'),
     },
+    {
+      label:  'Registrar cita de reserva',
+      icon:   'calendar-number',
+      color:  '#8b5cf6',
+      onPress: () => navigation.navigate('CitaReserva', { vehiculoId: '', vehiculoNombre: '' }),
+    },
   ];
 
   return (
@@ -52,12 +58,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         },
       ]}
     >
+      {/* Header */}
       <View style={styles.headerContainer}>
         <Text style={styles.title}>AD Motors</Text>
         <View style={styles.underline} />
         <Text style={styles.subtitle}>PANEL DE ADMINISTRACIÓN</Text>
       </View>
 
+      {/* Menú */}
       <View style={styles.buttonsContainer}>
         {menuItems.map((item, i) => (
           <TouchableOpacity

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   ViewStyle,
   TextStyle,
+  FlatList,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,12 +22,17 @@ import Input from "../components/input";
 import { supabase } from "../config/supabase";
 
 type Props = NativeStackScreenProps<RootStackParamList, "CitaReserva">;
-
 type TipoCita = "visita" | "pago";
+
+interface VehiculoItem {
+  id_vehiculo: string;
+  marca: string;
+  modelo: string;
+}
 
 const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
-  const { vehiculoId, vehiculoNombre } = route.params;
+  const { vehiculoId: initId, vehiculoNombre: initNombre } = route.params;
 
   const [tipoCita, setTipoCita] = useState<TipoCita>("visita");
   const [fecha, setFecha] = useState("");
@@ -34,9 +40,32 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
   const [telefono, setTelefono] = useState("");
   const [nombre, setNombre] = useState("");
   const [loading, setLoading] = useState(false);
+  const [vehiculos, setVehiculos] = useState<VehiculoItem[]>([]);
+  const [selectedId, setSelectedId] = useState(initId || "");
+  const [selectedName, setSelectedName] = useState(initNombre || "");
+  const [loadingVehs, setLoadingVehs] = useState(false);
+  const [showPicker, setShowPicker] = useState(!initId);
+
+  useEffect(() => {
+    if (!initId) cargarVehiculos();
+  }, []);
+
+  const cargarVehiculos = async () => {
+    setLoadingVehs(true);
+    try {
+      const { data } = await supabase
+        .from("vehiculo")
+        .select("id_vehiculo, marca, modelo")
+        .eq("reservado", true)
+        .order("fecha_creacion", { ascending: false });
+      setVehiculos(data || []);
+    } finally {
+      setLoadingVehs(false);
+    }
+  };
 
   const validarFecha = (f: string): boolean => {
-    if (!f) return false;
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(f)) return false;
     const [d, m, a] = f.split("/").map(Number);
     const fecha = new Date(a, m - 1, d);
     const manana = new Date();
@@ -49,8 +78,12 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
     /^([01]\d|2[0-3]):([0-5]\d)$/.test(h);
 
   const handleConfirmar = async () => {
+    if (!selectedId) {
+      Alert.alert("Error", "Selecciona un vehículo");
+      return;
+    }
     if (!nombre.trim()) {
-      Alert.alert("Error", "Introduce tu nombre");
+      Alert.alert("Error", "Introduce el nombre del asistente");
       return;
     }
     if (!telefono.trim() || !/^[0-9+\s]{9,15}$/.test(telefono)) {
@@ -58,18 +91,14 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
       return;
     }
     if (!validarFecha(fecha)) {
-      Alert.alert(
-        "Error",
-        "Introduce una fecha válida (a partir de mañana). Formato: DD/MM/AAAA",
-      );
+      Alert.alert("Error", "Fecha inválida. Formato DD/MM/AAAA, desde mañana");
       return;
     }
     if (!validarHora(hora)) {
-      Alert.alert("Error", "Introduce una hora válida. Formato: HH:MM");
+      Alert.alert("Error", "Hora inválida. Formato HH:MM (09:00-20:00)");
       return;
     }
 
-    // Convertir fecha de DD/MM/AAAA a AAAA-MM-DD
     const [d, m, a] = fecha.split("/");
     const fechaISO = `${a}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
 
@@ -77,8 +106,8 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
     try {
       const { error } = await supabase.from("solicitudes_revision").insert([
         {
-          id_vehiculo: vehiculoId,
-          marca_modelo: vehiculoNombre,
+          id_vehiculo: selectedId,
+          marca_modelo: selectedName,
           nombre_asistente: nombre,
           telefono,
           fecha_visita: fechaISO,
@@ -89,13 +118,8 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
 
       Alert.alert(
         "Cita registrada",
-        `Tu ${tipoCita === "visita" ? "visita" : "cita de pago"} ha sido registrada. Nos pondremos en contacto contigo para confirmar.`,
-        [
-          {
-            text: "Aceptar",
-            onPress: () => navigation.navigate("ListVehiculos"),
-          },
-        ],
+        `La cita de ${tipoCita === "visita" ? "visita" : "pago"} ha sido registrada correctamente.`,
+        [{ text: "Aceptar", onPress: () => navigation.navigate("Home") }],
       );
     } catch (err: any) {
       Alert.alert("Error", err?.message || "No se pudo registrar la cita");
@@ -111,28 +135,64 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
         { paddingTop: insets.top, paddingBottom: insets.bottom },
       ]}
     >
-      <Header
-        title="Reserva realizada"
-        onBackPress={() => navigation.goBack()}
-      />
+      <Header title="Registrar cita" onBackPress={() => navigation.goBack()} />
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
-        {/* Confirmación */}
-        <View style={styles.successCard}>
-          <Ionicons name="checkmark-circle" size={48} color="#22c55e" />
-          <Text style={styles.successTitle}>¡Reserva confirmada!</Text>
-          <Text style={styles.successSub}>{vehiculoNombre}</Text>
-        </View>
+        {/* Selector vehículo */}
+        <Text style={styles.label}>Vehículo reservado *</Text>
+        {selectedId ? (
+          <TouchableOpacity
+            style={styles.vehiculoSelected}
+            onPress={() => {
+              setSelectedId("");
+              setSelectedName("");
+              setShowPicker(true);
+              cargarVehiculos();
+            }}
+          >
+            <Ionicons name="car" size={20} color={Colors.primary} />
+            <Text style={styles.vehiculoSelectedText}>{selectedName}</Text>
+            <Ionicons
+              name="chevron-down"
+              size={16}
+              color={Colors.textSecondary}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.pickerContainer}>
+            {loadingVehs ? (
+              <ActivityIndicator color={Colors.primary} />
+            ) : vehiculos.length === 0 ? (
+              <Text style={styles.emptyText}>No hay vehículos reservados</Text>
+            ) : (
+              vehiculos.map((v) => (
+                <TouchableOpacity
+                  key={v.id_vehiculo}
+                  style={styles.vehiculoItem}
+                  onPress={() => {
+                    setSelectedId(v.id_vehiculo);
+                    setSelectedName(`${v.marca} ${v.modelo}`);
+                    setShowPicker(false);
+                  }}
+                >
+                  <Ionicons
+                    name="car-outline"
+                    size={18}
+                    color={Colors.textSecondary}
+                  />
+                  <Text style={styles.vehiculoItemText}>
+                    {v.marca} {v.modelo}
+                  </Text>
+                </TouchableOpacity>
+              ))
+            )}
+          </View>
+        )}
 
-        <Text style={styles.infoText}>
-          Para completar la compra, acuerda una visita al concesionario o un día
-          para realizar el pago.
-        </Text>
-
-        {/* Selector tipo cita */}
-        <Text style={styles.label}>Tipo de cita</Text>
+        {/* Tipo cita */}
+        <Text style={styles.label}>Tipo de cita *</Text>
         <View style={styles.tipoRow}>
           <TouchableOpacity
             style={[
@@ -173,21 +233,21 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
                 tipoCita === "pago" && styles.tipoBtnTextActive,
               ]}
             >
-              Día para{"\n"}el pago
+              Dia para{"\n"}el pago
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Formulario */}
+        {/* Datos */}
         <Text style={styles.label}>Nombre del asistente *</Text>
         <Input
-          placeholder="Tu nombre completo"
+          placeholder="Nombre completo"
           value={nombre}
           onChangeText={setNombre}
           icon="person-outline"
         />
 
-        <Text style={styles.label}>Teléfono de contacto *</Text>
+        <Text style={styles.label}>Telefono de contacto *</Text>
         <Input
           placeholder="+34 600 000 000"
           value={telefono}
@@ -226,33 +286,25 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
             color={Colors.primary}
           />
           <Text style={styles.infoBoxText}>
-            Nos pondremos en contacto contigo para confirmar la disponibilidad.
+            Nos pondremos en contacto con el cliente para confirmar la
+            disponibilidad.
           </Text>
         </View>
 
-        <View style={styles.actions}>
-          <TouchableOpacity
-            style={[styles.btn, styles.btnSecondary]}
-            onPress={() => navigation.navigate("ListVehiculos")}
-            disabled={loading}
-          >
-            <Text style={styles.btnSecondaryText}>Decidir más tarde</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.btn, styles.btnPrimary]}
-            onPress={handleConfirmar}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" size="small" />
-            ) : (
-              <>
-                <Ionicons name="checkmark" size={18} color="#fff" />
-                <Text style={styles.btnPrimaryText}>Confirmar cita</Text>
-              </>
-            )}
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={[styles.btnConfirmar, loading && { opacity: 0.6 }]}
+          onPress={handleConfirmar}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : (
+            <>
+              <Ionicons name="checkmark-circle" size={20} color="#fff" />
+              <Text style={styles.btnConfirmarText}>Confirmar cita</Text>
+            </>
+          )}
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -267,33 +319,53 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.lg,
   } as ViewStyle,
-  successCard: {
-    alignItems: "center",
-    backgroundColor: Colors.secondaryBackground,
-    borderRadius: 16,
-    padding: spacing.xl,
-    marginBottom: spacing.lg,
-    gap: spacing.md,
-  } as ViewStyle,
-  successTitle: {
-    fontSize: 20,
-    fontWeight: "800",
-    color: Colors.textPrimary,
-  } as TextStyle,
-  successSub: { fontSize: 14, color: Colors.textSecondary } as TextStyle,
-  infoText: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    lineHeight: 20,
-    textAlign: "center",
-    marginBottom: spacing.xl,
-  } as TextStyle,
   label: {
     fontSize: 14,
     fontWeight: "600",
     color: Colors.textPrimary,
     marginBottom: spacing.sm,
     marginTop: spacing.lg,
+  } as TextStyle,
+  vehiculoSelected: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    backgroundColor: Colors.secondaryBackground,
+    borderRadius: 12,
+    padding: spacing.lg,
+    borderWidth: 1.5,
+    borderColor: Colors.primary,
+  } as ViewStyle,
+  vehiculoSelectedText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+  } as TextStyle,
+  pickerContainer: {
+    backgroundColor: Colors.secondaryBackground,
+    borderRadius: 12,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: Colors.border,
+  } as ViewStyle,
+  vehiculoItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  } as ViewStyle,
+  vehiculoItemText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.textPrimary,
+  } as TextStyle,
+  emptyText: {
+    padding: spacing.lg,
+    color: Colors.textSecondary,
+    textAlign: "center",
   } as TextStyle,
   tipoRow: { flexDirection: "row", gap: spacing.md } as ViewStyle,
   tipoBtn: {
@@ -336,35 +408,20 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     lineHeight: 18,
   } as TextStyle,
-  actions: {
-    flexDirection: "row",
-    gap: spacing.md,
-    marginTop: spacing.xl,
-  } as ViewStyle,
-  btn: {
-    flex: 1,
+  btnConfirmar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: spacing.sm,
-    paddingVertical: spacing.lg,
+    gap: spacing.md,
+    backgroundColor: Colors.primary,
     borderRadius: 14,
+    paddingVertical: spacing.lg,
+    marginTop: spacing.xl,
   } as ViewStyle,
-  btnPrimary: { backgroundColor: Colors.primary } as ViewStyle,
-  btnPrimaryText: {
+  btnConfirmarText: {
     color: "#fff",
+    fontSize: 16,
     fontWeight: "700",
-    fontSize: 14,
-  } as TextStyle,
-  btnSecondary: {
-    backgroundColor: Colors.secondaryBackground,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  } as ViewStyle,
-  btnSecondaryText: {
-    color: Colors.textSecondary,
-    fontWeight: "600",
-    fontSize: 14,
   } as TextStyle,
 });
 
