@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 
 import { RootStackParamList } from "./src/types";
+import {
+  registerForPushNotifications,
+  startListeningNotifications,
+  stopListeningNotifications,
+} from "./src/services/notificationService";
 
 import HomeScreen from "./src/screens/homeScreen";
 import ListVehiculosScreen from "./src/screens/listVehiculosScreen";
@@ -17,6 +22,12 @@ import CitaReservaScreen from "./src/screens/citaReservaScreen";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  useEffect(() => {
+    registerForPushNotifications();
+    startListeningNotifications();
+    return () => stopListeningNotifications();
+  }, []);
+
   return (
     <SafeAreaProvider>
       <StatusBar style="light" />
