@@ -1,3 +1,5 @@
+// src/screens/SolicitudesScreen.tsx
+
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
@@ -35,6 +37,7 @@ interface Solicitud {
   marca_modelo?: string;
   marca?: string;
   modelo?: string;
+  tipo?: string;
 }
 
 type FiltroEstado = "TODOS" | "PENDIENTE" | "CONFIRMADA" | "CANCELADA";
@@ -220,6 +223,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
     const estadoStyle = getEstadoStyle(s.estado);
     const isUpdating = updating === s.id;
     const isPendiente = s.estado === "PENDIENTE";
+    const esPago = s.tipo === "pago";
 
     const marca = s.marca || s.marca_modelo?.split(" ")[0] || "—";
     const modelo =
@@ -230,13 +234,33 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
         {/* Cabecera */}
         <View style={styles.cardHeader}>
           <View style={styles.cardHeaderLeft}>
-            <View style={styles.cardIcon}>
-              <Ionicons name="calendar" size={18} color={Colors.primary} />
+            <View
+              style={[
+                styles.cardIcon,
+                esPago && { backgroundColor: "#1e0a3c" },
+              ]}
+            >
+              <Ionicons
+                name={esPago ? "card" : "calendar"}
+                size={18}
+                color={esPago ? "#8b5cf6" : Colors.primary}
+              />
             </View>
             <View>
-              <Text style={styles.cardVehiculo}>
-                {marca} · {modelo}
-              </Text>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
+              >
+                <Text style={styles.cardVehiculo}>
+                  {marca} · {modelo}
+                </Text>
+                <View
+                  style={[styles.tipoBadge, esPago && styles.tipoBadgePago]}
+                >
+                  <Text style={styles.tipoBadgeText}>
+                    {esPago ? "PAGO" : "VISITA"}
+                  </Text>
+                </View>
+              </View>
               <Text style={styles.cardFecha}>
                 {formatFecha(s.fecha_visita)} ·{" "}
                 {s.hora_visita?.slice(0, 5) || "—"}
@@ -504,6 +528,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 2,
+  } as TextStyle,
+  tipoBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    backgroundColor: "#1e3a5f",
+  } as ViewStyle,
+  tipoBadgePago: { backgroundColor: "#1e0a3c" } as ViewStyle,
+  tipoBadgeText: {
+    fontSize: 9,
+    fontWeight: "800",
+    color: "#93c5fd",
+    letterSpacing: 0.5,
   } as TextStyle,
   estadoBadge: {
     paddingHorizontal: spacing.md,
