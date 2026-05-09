@@ -123,6 +123,12 @@ Acceso directo a las tres secciones principales: lista de vehículos, añadir ve
 
 ---
 
+## 📚 Documentación
+
+- 📋 [Documentación técnica](docs/documentacion-tecnica.md)
+- 👤 [Manual de usuario](docs/manual-usuario.md)
+- ⚙️ [Manual de instalación](docs/manual-instalacion.md)
+
 ## 📝 Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver archivo `LICENSE` para más detalles.
