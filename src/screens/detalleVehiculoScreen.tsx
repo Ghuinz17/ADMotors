@@ -31,9 +31,9 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
   navigation,
   route,
 }) => {
+
   const insets = useSafeAreaInsets();
   const { vehiculoId } = route.params;
-
   const [vehiculo, setVehiculo] = useState<Vehiculo | null>(null);
   const [imagenes, setImagenes] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +44,7 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
     cargarVehiculo();
   }, [vehiculoId]);
 
+  // Carga los datos del vehículo y sus imágenes desde Supabase 
   const cargarVehiculo = async () => {
     try {
       setLoading(true);
@@ -70,10 +71,12 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
     }
   };
 
+  // Navega a la pantalla de edición mediante el ID del vehículo
   const handleEditar = () => {
     navigation.navigate('EditarVehiculo', { vehiculoId });
   };
 
+  // Muestra confirmación antes de volver a publicar el vehículo 
   const handleRepublicar = () => {
     Alert.alert(
       'Volver a publicar',
@@ -85,6 +88,7 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
     );
   };
 
+  // Actualiza el campo 'reservado' en Supabase y limpia la fecha de reserva
   const republicarVehiculo = async () => {
     setPublishing(true);
     try {
@@ -103,6 +107,7 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
     }
   };
 
+  // Muestra confirmación antes de eliminar el vehículo
   const handleEliminar = () => {
     Alert.alert(
       'Eliminar vehículo',
@@ -122,6 +127,7 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
     );
   };
 
+  // Llama al servicio para eliminar el vehículo y sus imágenes, luego navega atrás
   const eliminarVehiculo = async () => {
     setDeleting(true);
     try {
@@ -142,6 +148,7 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
     }
   };
 
+  // Renderiza cada imagen en la galería con tamaño fijo
   const renderImagen = ({ item }: { item: string; index: number }) => (
     <View style={styles.imagenItem}>
       <Image
@@ -305,7 +312,6 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
           )}
         </View>
 
-        {/* Badge reservado */}
         {vehiculo.reservado && (
           <View style={styles.reservadoBadge}>
             <Ionicons name="lock-closed" size={14} color="#fff" />
@@ -360,6 +366,7 @@ const DetalleVehiculoScreen: React.FC<DetalleVehiculoScreenProps> = ({
   );
 };
 
+// Componente auxiliar: fila de dato con icono, etiqueta y valor
 interface DetailRowProps {
   icon: string;
   label: string;
@@ -390,6 +397,7 @@ const DetailRow: React.FC<DetailRowProps> = ({
 
 const Divider = () => <View style={styles.divider} />;
 
+// Estilos de la pantalla 
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -19,6 +19,7 @@ type HomeScreenProps = NativeStackScreenProps<RootStackParamList, "Home">;
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const insets = useSafeAreaInsets();
 
+  // Definición de los elementos del menú: etiqueta, icono, color y destino de navegación
   const menuItems = [
     {
       label: "Lista de vehículos",
@@ -52,14 +53,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         },
       ]}
     >
-      {/* Header */}
       <View style={styles.headerContainer}>
         <Text style={styles.title}>AD Motors</Text>
         <View style={styles.underline} />
         <Text style={styles.subtitle}>PANEL DE ADMINISTRACIÓN</Text>
       </View>
 
-      {/* Menú */}
       <View style={styles.buttonsContainer}>
         {menuItems.map((item, i) => (
           <TouchableOpacity
@@ -88,6 +87,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   );
 };
 
+// Estilos de la pantalla
 const styles = StyleSheet.create({
   container: {
     flex: 1,

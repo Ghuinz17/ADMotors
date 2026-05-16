@@ -1,5 +1,3 @@
-// Notificaciones locales para nuevas reservas y solicitudes de visita
-
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { Platform } from 'react-native';

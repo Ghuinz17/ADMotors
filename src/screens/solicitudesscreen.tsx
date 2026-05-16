@@ -1,5 +1,3 @@
-// src/screens/SolicitudesScreen.tsx
-
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
@@ -25,6 +23,7 @@ import { supabase } from "../config/supabase";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Solicitudes">;
 
+// Interfaz que define la estructura de una solicitud de visita
 interface Solicitud {
   id: string;
   id_vehiculo: string;
@@ -40,8 +39,10 @@ interface Solicitud {
   tipo?: string;
 }
 
+// Tipo para los posibles valores del filtro de estado
 type FiltroEstado = "TODOS" | "PENDIENTE" | "CONFIRMADA" | "CANCELADA";
 
+// Configuración de los filtros: clave, etiqueta visible y color del botón
 const ESTADOS: { key: FiltroEstado; label: string; color: string }[] = [
   { key: "TODOS", label: "Todos", color: Colors.primary },
   { key: "PENDIENTE", label: "Pendientes", color: "#f59e0b" },
@@ -49,6 +50,7 @@ const ESTADOS: { key: FiltroEstado; label: string; color: string }[] = [
   { key: "CANCELADA", label: "Canceladas", color: Colors.danger },
 ];
 
+// Componente principal de la pantalla
 const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
@@ -57,6 +59,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
   const [filtro, setFiltro] = useState<FiltroEstado>("TODOS");
   const [updating, setUpdating] = useState<string | null>(null);
 
+  // Carga todas las solicitudes desde Supabase ordenadas por fech
   const cargarSolicitudes = useCallback(async () => {
     try {
       // Sin join a vehiculo para evitar errores de RLS
@@ -87,11 +90,13 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
     cargarSolicitudes();
   }, []);
 
+  // Activa el pull-to-refresh y recarga las solicitudes
   const onRefresh = () => {
     setRefreshing(true);
     cargarSolicitudes();
   };
 
+  // Cambia el estado de una solicitud (CONFIRMADA o CANCELADA)
   const cambiarEstado = async (
     id: string,
     nuevoEstado: "CONFIRMADA" | "CANCELADA",
@@ -160,6 +165,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
     ]);
   };
 
+  // Muestra opciones para contactar al cliente por llamada o WhatsApp
   const contactarCliente = (s: Solicitud) => {
     const tel = s.telefono.replace(/\s/g, "");
     Alert.alert(
@@ -187,6 +193,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
     );
   };
 
+  // Formatea una fecha ISO a formato corto en español (ej: "lun, 5 may")
   const formatFecha = (fecha: string) => {
     if (!fecha) return "—";
     return new Date(fecha + "T00:00:00").toLocaleDateString("es-ES", {
@@ -196,6 +203,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
     });
   };
 
+  // Devuelve los colores de fondo y texto según el estado de la solicitud
   const getEstadoStyle = (estado: string) => {
     switch (estado) {
       case "CONFIRMADA":
@@ -207,6 +215,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
+  // Construye el nombre del vehículo priorizando marca+modelo sobre marca_modelo
   const getNombreVehiculo = (s: Solicitud) => {
     if (s.marca && s.modelo) return `${s.marca} ${s.modelo}`;
     if (s.marca_modelo) return s.marca_modelo;
@@ -214,6 +223,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
     return "Vehículo";
   };
 
+  // Aplica el filtro de estado a la lista completa de solicitudes
   const filtradas =
     filtro === "TODOS"
       ? solicitudes
@@ -276,7 +286,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Info vehículo */}
+        {/* Bloque con marca y modelo del vehículo */}
         <View style={styles.vehiculoInfo}>
           <View style={styles.infoRow}>
             <Ionicons
@@ -298,7 +308,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Info cliente */}
+        {/* Bloque con nombre y teléfono del cliente */}
         <View style={styles.clienteInfo}>
           <View style={styles.infoRow}>
             <Ionicons
@@ -318,9 +328,9 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Acciones */}
+        {/* Botones de acción: Contactar siempre visible, Aceptar/Rechazar solo si PENDIENTE */}
         <View style={styles.acciones}>
-          {/* Contactar — siempre visible */}
+          {/* Botón de contacto disponible para cualquier estado */}
           <TouchableOpacity
             style={[styles.accionBtn, styles.btnContactar]}
             onPress={() => contactarCliente(s)}
@@ -330,7 +340,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.accionText}>Contactar</Text>
           </TouchableOpacity>
 
-          {/* Aceptar — solo si pendiente */}
+          {/* Botón de aceptar: solo visible si la solicitud está PENDIENTE */}
           {isPendiente && (
             <TouchableOpacity
               style={[styles.accionBtn, styles.btnAceptar]}
@@ -348,7 +358,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
             </TouchableOpacity>
           )}
 
-          {/* Rechazar — solo si pendiente */}
+          {/* Botón de rechazar: solo visible si la solicitud está PENDIENTE */}
           {isPendiente && (
             <TouchableOpacity
               style={[styles.accionBtn, styles.btnRechazar]}
@@ -393,7 +403,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
         onBackPress={() => navigation.goBack()}
       />
 
-      {/* Filtros */}
+      {/* Barra de filtros de estado */}
       <View style={styles.filtros}>
         {ESTADOS.map((e) => (
           <TouchableOpacity
@@ -416,7 +426,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
         ))}
       </View>
 
-      {/* Contador */}
+      {/* Contador de solicitudes visibles según el filtro activo */}
       <Text style={styles.contador}>
         {filtradas.length} solicitud{filtradas.length !== 1 ? "es" : ""}
       </Text>
@@ -453,6 +463,7 @@ const SolicitudesScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
+// Estilos de la pantalla
 const styles = StyleSheet.create({
   container: {
     flex: 1,

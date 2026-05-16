@@ -9,7 +9,7 @@ export interface ImagePickerResult {
 
 export const ImageService = {
   /**
-   * SOLICITAR PERMISO DE GALERÍA
+   * Solicita permiso de galería
    */
   async requestGalleryPermission(): Promise<boolean> {
     try {
@@ -29,7 +29,7 @@ export const ImageService = {
   },
 
   /**
-   * SOLICITAR PERMISO DE CÁMARA
+   * Solicita permiso de cámara
    */
   async requestCameraPermission(): Promise<boolean> {
     try {
@@ -49,7 +49,7 @@ export const ImageService = {
   },
 
   /**
-   * SELECCIONAR IMAGEN DE GALERÍA
+   * Selecciona la imagen de la galería
    */
   async pickImageFromGallery(): Promise<ImagePickerResult | null> {
     try {
@@ -91,7 +91,7 @@ export const ImageService = {
   },
 
   /**
-   * TOMAR FOTO CON CÁMARA
+   * Realizar una foto con la cámara
    */
   async takePictureFromCamera(): Promise<ImagePickerResult | null> {
     try {
@@ -133,7 +133,7 @@ export const ImageService = {
   },
 
   /**
-   * GENERAR NOMBRE DE ARCHIVO
+   * Generar nombre del archivo
    */
   generateFileName(timestamp: string = ''): string {
     const time = timestamp || Date.now().toString();
@@ -142,7 +142,7 @@ export const ImageService = {
   },
 
   /**
-   * OBTENER MIME TYPE
+   * Obtener mine type
    */
   getMimeType(): string {
     return 'image/jpeg';

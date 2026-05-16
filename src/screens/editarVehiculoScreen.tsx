@@ -35,6 +35,7 @@ const EditarVehiculoScreen: React.FC<Props> = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
   const { vehiculoId } = route.params;
 
+  // Datos del vehículo cargados desde Supabase
   const [vehiculo, setVehiculo] = useState<Vehiculo | null>(null);
   const [formData, setFormData] = useState<VehiculoFormData>({
     marca: "",
@@ -55,6 +56,7 @@ const EditarVehiculoScreen: React.FC<Props> = ({ navigation, route }) => {
     cargarVehiculo();
   }, [vehiculoId]);
 
+  // Carga los datos del vehículo desde Supabase y rellena el formulario
   const cargarVehiculo = async () => {
     setLoading(true);
     try {
@@ -84,6 +86,7 @@ const EditarVehiculoScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
+  // Valida los campos obligatorios antes de guardar
   const validateForm = (): boolean => {
     if (!formData.marca.trim()) {
       Alert.alert("Error", "La marca es obligatoria");
@@ -107,6 +110,7 @@ const EditarVehiculoScreen: React.FC<Props> = ({ navigation, route }) => {
     return true;
   };
 
+  // Abre la galería para seleccionar imágenes adicionales
   const handleAgregarImagen = async () => {
     try {
       const r = await ImageService.pickImageFromGallery();
@@ -119,6 +123,7 @@ const EditarVehiculoScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
+  // Abre la cámara para tomar fotos adicionales
   const handleTomarFoto = async () => {
     try {
       const r = await ImageService.takePictureFromCamera();
@@ -131,6 +136,7 @@ const EditarVehiculoScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
+  // Elimina una imagen de la lista de nuevas imágenes por índice
   const handleEliminarImagen = (i: number) => {
     setFormData((p) => ({
       ...p,
@@ -139,6 +145,7 @@ const EditarVehiculoScreen: React.FC<Props> = ({ navigation, route }) => {
     setImagenesPreview((p) => p.filter((_, idx) => idx !== i));
   };
 
+  // Valida y envía los datos actualizados a Supabase
   const handleGuardar = async () => {
     if (!validateForm()) return;
     setSaving(true);
@@ -157,6 +164,7 @@ const EditarVehiculoScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
+  // Helper para actualizar un campo del formulario de forma genérica
   const set = (key: keyof VehiculoFormData) => (val: any) =>
     setFormData((p) => ({ ...p, [key]: val }));
 
@@ -347,6 +355,7 @@ const EditarVehiculoScreen: React.FC<Props> = ({ navigation, route }) => {
   );
 };
 
+// Estilos de la pantalla
 const styles = StyleSheet.create({
   container: {
     flex: 1,

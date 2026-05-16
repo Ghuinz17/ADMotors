@@ -4,6 +4,7 @@ import { decode } from 'base64-arraybuffer';
 
 export const SupabaseVehiculoService = {
 
+  // READ: Obtiene todos los vehículos ordenados por fecha de creación
   async getVehiculos(): Promise<Vehiculo[]> {
     try {
       const { data, error } = await supabase
@@ -19,6 +20,7 @@ export const SupabaseVehiculoService = {
     }
   },
 
+  // READ: Obtiene un vehículo por su ID y devuelve null si no existe
   async getVehiculoById(id: string): Promise<Vehiculo | null> {
     try {
       const { data, error } = await supabase
@@ -31,6 +33,8 @@ export const SupabaseVehiculoService = {
     }
   },
 
+  // READ: Obtiene las URLs públicas de las imágenes de un vehículo 
+  // Consulta vehiculo_imagenes y construye la URL pública desde Supabase Storage
   async getImagenesVehiculo(vehiculoId: string): Promise<string[]> {
     try {
       const { data, error } = await supabase
@@ -47,6 +51,8 @@ export const SupabaseVehiculoService = {
     }
   },
 
+  // CREATE
+  // Devuelve el ID del vehículo creado
   async createVehiculo(formData: VehiculoFormData): Promise<string> {
     try {
       const { data, error } = await supabase
@@ -77,6 +83,7 @@ export const SupabaseVehiculoService = {
     }
   },
 
+  // UPDATE
   async updateVehiculo(id: string, formData: VehiculoFormData): Promise<void> {
     try {
       const { error } = await supabase
@@ -104,6 +111,8 @@ export const SupabaseVehiculoService = {
     }
   },
 
+  // Genera un nombre único por imagen y registra la referencia en vehiculo_imagenes
+  // Las imágenes que ya sean URLs (http) se saltan automáticamente
   async subirImagenesBase64(vehiculoId: string, imagenes: string[]): Promise<void> {
     let ok = 0, err = 0;
     for (let i = 0; i < imagenes.length; i++) {
@@ -123,6 +132,8 @@ export const SupabaseVehiculoService = {
     console.log(`Imágenes: ${ok} OK, ${err} errores`);
   },
 
+  // DELETE
+  // Primero borra los archivos de Storage y luego la fila de la BD
   async deleteVehiculo(id: string): Promise<void> {
     try {
       const { data: imgs } = await supabase
@@ -139,6 +150,7 @@ export const SupabaseVehiculoService = {
     }
   },
 
+  // Devuelve true si la consulta de prueba no produce error
   async testConnection(): Promise<boolean> {
     try {
       const { error } = await supabase.from('vehiculo').select('count').limit(1);

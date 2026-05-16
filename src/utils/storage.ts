@@ -1,17 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/**
- * Sistema de almacenamiento local de la aplicación
- * Gestiona: Device ID, caché local, preferencias, etc.
- */
-
 const DEVICE_ID_KEY = 'APP_DEVICE_ID';
 const VEHICULOS_CACHE_KEY = 'VEHICULOS_CACHE';
 const USER_PREFERENCES_KEY = 'USER_PREFERENCES';
 const LAST_SYNC_KEY = 'LAST_SYNC';
 
 /**
- * GENERADOR DE IDS SIN CRYPTO
+ * Generador de ids sin crypto
  */
 function generateSimpleId(): string {
   const timestamp = Date.now().toString(36);
@@ -19,12 +14,9 @@ function generateSimpleId(): string {
   return `${timestamp}-${randomPart}`;
 }
 
-/**
- * AppStorage - Utilidades de almacenamiento
- */
 export const AppStorage = {
   /**
-   * OBTENER O CREAR DEVICE ID
+   * Obtener o crear device id
    */
   async getDeviceId(): Promise<string> {
     try {

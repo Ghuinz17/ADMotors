@@ -40,6 +40,7 @@ const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({
     }, []),
   );
 
+  // Obtiene todos los vehículos de Supabase ordenados por fecha de creación
   const cargarVehiculos = async () => {
     try {
       console.log("Cargando lista de vehiculos...");
@@ -55,20 +56,24 @@ const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({
     }
   };
 
+  // Activa el pull-to-refresh y recarga la lista de vehículos
   const onRefresh = async () => {
     setRefreshing(true);
     await cargarVehiculos();
     setRefreshing(false);
   };
 
+  // Navega a la pantalla de añadir vehículo
   const handleAgregarVehiculo = () => {
     navigation.navigate("AnadirVehiculo");
   };
 
+  // Navega a la pantalla de detalle del vehículo seleccionado
   const handleVerDetalle = (vehiculoId: string) => {
     navigation.navigate("DetalleVehiculo", { vehiculoId });
   };
 
+  // Renderiza la tarjeta de cada vehículo en la lista
   const renderVehiculo = ({ item }: { item: Vehiculo }) => (
     <TouchableOpacity
       style={styles.vehiculoCard}
@@ -129,6 +134,7 @@ const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({
     </TouchableOpacity>
   );
 
+  // Renderiza el estado vacío cuando no hay vehículos registrados
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <Ionicons name="car-outline" size={48} color={Colors.textTertiary} />
@@ -215,6 +221,7 @@ const ListVehiculosScreen: React.FC<ListVehiculosScreenProps> = ({
   );
 };
 
+// Estilos de la pantalla
 const styles = StyleSheet.create({
   container: {
     flex: 1,

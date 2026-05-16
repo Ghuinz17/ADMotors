@@ -35,6 +35,7 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
   const { vehiculoId: initId, vehiculoNombre: initNombre } = route.params;
 
   const [tipoCita, setTipoCita] = useState<TipoCita>("visita");
+  // Campos del formulario de cita
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [telefono, setTelefono] = useState("");
@@ -50,6 +51,7 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
     if (!initId) cargarVehiculos();
   }, []);
 
+  // Carga los vehículos con reservado=true para mostrar en el selector
   const cargarVehiculos = async () => {
     setLoadingVehs(true);
     try {
@@ -64,6 +66,7 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
+  // Valida que la fecha tenga formato DD/MM/AAAA y sea al menos mañana
   const validarFecha = (f: string): boolean => {
     if (!/^\d{2}\/\d{2}\/\d{4}$/.test(f)) return false;
     const [d, m, a] = f.split("/").map(Number);
@@ -74,9 +77,11 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
     return fecha >= manana;
   };
 
+  // Valida que la hora tenga formato HH:MM válido (00:00 - 23:59)
   const validarHora = (h: string): boolean =>
     /^([01]\d|2[0-3]):([0-5]\d)$/.test(h);
 
+  // Valida los campos y guarda la cita en solicitudes_revision
   const handleConfirmar = async () => {
     if (!selectedId) {
       Alert.alert("Error", "Selecciona un vehículo");
@@ -140,7 +145,6 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
-        {/* Selector vehículo */}
         <Text style={styles.label}>Vehículo reservado *</Text>
         {selectedId ? (
           <TouchableOpacity
@@ -191,7 +195,6 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
         )}
 
-        {/* Tipo cita */}
         <Text style={styles.label}>Tipo de cita *</Text>
         <View style={styles.tipoRow}>
           <TouchableOpacity
@@ -238,7 +241,6 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Datos */}
         <Text style={styles.label}>Nombre del asistente *</Text>
         <Input
           placeholder="Nombre completo"
@@ -310,6 +312,7 @@ const CitaReservaScreen: React.FC<Props> = ({ navigation, route }) => {
   );
 };
 
+// Estilos de la pantalla
 const styles = StyleSheet.create({
   container: {
     flex: 1,

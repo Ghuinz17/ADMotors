@@ -5,11 +5,6 @@ import { AppStorage } from "../utils/storage";
 
 const VEHICULOS_KEY = "@AD_MOTORS_VEHICULOS";
 
-/**
- * VehiculoService - Servicio de caché local
- * Proporciona almacenamiento de vehículos en AsyncStorage
- * Útil para: Caché, datos offline, sincronización
- */
 export const VehiculoService = {
   /**
    * Obtener todos los vehículos del almacenamiento local
@@ -262,13 +257,13 @@ export const VehiculoService = {
   },
 
   /**
-   * Sincronizar con base de datos (para futuro)
+   * Sincronizar con base de datos 
    */
   async syncWithServer(vehiculosRemote: Vehiculo[]): Promise<void> {
     try {
       const vehiculosLocal = await this.getVehiculos();
 
-      // Combinar locales y remotos (implementar según necesidad)
+      // Combinar locales y remotos
       const combinados = [...vehiculosLocal];
 
       vehiculosRemote.forEach((remoto) => {

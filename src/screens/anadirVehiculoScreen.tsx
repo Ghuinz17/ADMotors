@@ -33,6 +33,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "AnadirVehiculo">;
 const AnadirVehiculoScreen: React.FC<Props> = ({ navigation }) => {
   const insets = useSafeAreaInsets();
 
+  // Estado del formulario con todos los campos del vehículo
   const [formData, setFormData] = useState<VehiculoFormData>({
     marca: "",
     modelo: "",
@@ -47,6 +48,7 @@ const AnadirVehiculoScreen: React.FC<Props> = ({ navigation }) => {
   const [imagenesPreview, setImagenesPreview] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Valida que todos los campos obligatorios tengan valores correctos
   const validateForm = (): boolean => {
     if (!formData.marca.trim()) {
       Alert.alert("Error", "La marca es obligatoria");
@@ -74,6 +76,7 @@ const AnadirVehiculoScreen: React.FC<Props> = ({ navigation }) => {
     return true;
   };
 
+  // Abre la galería para seleccionar una imagen
   const handleAgregarImagen = async () => {
     try {
       const r = await ImageService.pickImageFromGallery();
@@ -86,6 +89,7 @@ const AnadirVehiculoScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
+  // Abre la cámara para realizar una foto
   const handleTomarFoto = async () => {
     try {
       const r = await ImageService.takePictureFromCamera();
@@ -98,6 +102,7 @@ const AnadirVehiculoScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
+  // Elimina una imagen de la lista por su índice
   const handleEliminarImagen = (i: number) => {
     setFormData((p) => ({
       ...p,
@@ -106,6 +111,7 @@ const AnadirVehiculoScreen: React.FC<Props> = ({ navigation }) => {
     setImagenesPreview((p) => p.filter((_, idx) => idx !== i));
   };
 
+  // Valida el formulario y envía los datos a Supabase para crear el vehículo
   const handleGuardar = async () => {
     if (!validateForm()) return;
     setLoading(true);
@@ -121,6 +127,7 @@ const AnadirVehiculoScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
+  // Helper para actualizar un campo del formulario de forma genérica
   const set = (key: keyof VehiculoFormData) => (val: any) =>
     setFormData((p) => ({ ...p, [key]: val }));
 
@@ -303,6 +310,7 @@ const AnadirVehiculoScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
+// Estilos de la pantalla
 const styles = StyleSheet.create({
   container: {
     flex: 1,

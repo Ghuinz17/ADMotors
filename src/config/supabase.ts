@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 
-// REEMPLAZA ESTOS VALORES CON LOS TUYOS
 const SUPABASE_URL = 'https://mgbftvxlqinxrthswqih.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nYmZ0dnhscWlueHJ0aHN3cWloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMjQyNDQsImV4cCI6MjA4NDYwMDI0NH0.f6c8-_Yc59Y2D3JNk5PV6rxYFBHxg0nT9ng6IElbuBU';
 
@@ -13,7 +12,7 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     persistSession: true,
     detectSessionInUrl: false,
   },
-  // Opciones de realtime (opcional)
+  // Opciones de realtime
   realtime: {
     params: {
       eventsPerSecond: 10,
@@ -62,20 +61,3 @@ export const getSessionStatus = async () => {
   }
 };
 
-// Función para sign up anónimo (opcional)
-export const signUpAnonymously = async () => {
-  try {
-    const { data, error } = await supabase.auth.signInAnonymously();
-
-    if (error) {
-      console.error('Error al login anónimo:', error);
-      return null;
-    }
-
-    console.log('Login anónimo exitoso');
-    return data.session;
-  } catch (error) {
-    console.error('Error:', error);
-    return null;
-  }
-};
